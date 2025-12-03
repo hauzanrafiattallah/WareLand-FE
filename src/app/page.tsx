@@ -2,7 +2,7 @@ import Navbar from "@/components/Navbar";
 import Image from "next/image";
 import Link from "next/link";
 
-export default function Home() {
+export default function LandingPage() {
   return (
     <div className="min-h-screen bg-white font-sans">
       <Navbar />
@@ -44,7 +44,7 @@ export default function Home() {
         {/* RIGHT IMAGE */}
         <div className="flex justify-center">
           <Image
-            src="/image.png"
+            src="/home.png"
             width={450}
             height={450}
             alt="WareLand Property Image"
