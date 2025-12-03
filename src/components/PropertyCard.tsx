@@ -14,7 +14,7 @@ type Property = {
 export default function PropertyCard({ property }: { property: Property }) {
   return (
     <Link
-      href={`/properties/${property.id}`}
+      href={`/dashboard/properties/${property.id}`}
       className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200 block"
     >
       <div className="relative w-full h-48 rounded-t-xl overflow-hidden">
@@ -36,15 +36,11 @@ export default function PropertyCard({ property }: { property: Property }) {
       <div className="p-4 space-y-1">
         <h3 className="font-semibold text-lg line-clamp-1">{property.title}</h3>
 
-        <p className="text-[#39D177] font-bold text-lg">
-          Rp {property.price}
-        </p>
+        <p className="text-[#39D177] font-bold text-lg">Rp {property.price}</p>
 
         <p className="text-gray-600 text-sm">{property.location}</p>
 
-        <p className="text-gray-400 text-xs">
-          Listed by {property.seller}
-        </p>
+        <p className="text-gray-400 text-xs">Listed by {property.seller}</p>
       </div>
     </Link>
   );
