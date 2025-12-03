@@ -16,7 +16,7 @@ export default function ProfileSettings() {
   });
 
   return (
-    <main className="p-10 max-w-3xl mx-auto">
+    <main className="p-6 sm:p-10 max-w-3xl mx-auto">
       {/* Title */}
       <h1 className="text-3xl font-semibold text-gray-900 mb-1">
         User Profile & Settings
@@ -26,9 +26,9 @@ export default function ProfileSettings() {
       </p>
 
       {/* HEADER PROFILE CARD */}
-      <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm flex items-center justify-between">
-        {/* LEFT */}
-        <div className="flex items-center gap-4">
+      <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-6">
+        {/* LEFT - Modified to stack on mobile */}
+        <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto text-center sm:text-left">
           <Image
             src="/profile.png"
             width={70}
@@ -39,7 +39,7 @@ export default function ProfileSettings() {
 
           <div>
             <h2 className="text-xl font-semibold">{profile.name}</h2>
-            <p className="text-gray-600 text-sm">{profile.email}</p>
+            <p className="text-gray-600 text-sm break-all">{profile.email}</p>
 
             {/* MODERN VERIFIED BADGE */}
             <span className="inline-flex items-center gap-1 mt-2 text-xs bg-[#E6FAEF] text-[#1E8E4A] px-3 py-1 rounded-full font-medium border border-[#39D177]/30">
@@ -52,7 +52,7 @@ export default function ProfileSettings() {
         {/* EDIT BUTTON */}
         <button
           onClick={() => setEditMode(true)}
-          className="px-6 py-2 rounded-full bg-[#39D177] text-white hover:bg-[#2FAE63] transition"
+          className="w-full sm:w-auto px-6 py-2 rounded-full bg-[#39D177] text-white hover:bg-[#2FAE63] transition"
         >
           Edit Profile
         </button>
@@ -157,15 +157,15 @@ export default function ProfileSettings() {
 
         {/* BUTTONS */}
         {editMode && (
-          <div className="mt-6 flex gap-4">
+          <div className="mt-6 flex flex-col-reverse sm:flex-row gap-3 sm:gap-4">
             <button
               onClick={() => setEditMode(false)}
-              className="px-6 py-2 rounded-full bg-gray-300 text-gray-800 hover:bg-gray-400"
+              className="w-full sm:w-auto px-6 py-3 sm:py-2 rounded-xl sm:rounded-full bg-gray-200 text-gray-800 hover:bg-gray-300 font-medium transition"
             >
               Cancel
             </button>
 
-            <button className="px-8 py-2 rounded-full bg-[#39D177] text-white hover:bg-[#2FAE63] transition">
+            <button className="w-full sm:w-auto px-8 py-3 sm:py-2 rounded-xl sm:rounded-full bg-[#39D177] text-white hover:bg-[#2FAE63] font-medium transition shadow-sm hover:shadow">
               Save Changes
             </button>
           </div>
