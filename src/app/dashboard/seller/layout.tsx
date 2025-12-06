@@ -18,8 +18,6 @@ const sellerNavItems = [
   { name: "My Listings", href: "/dashboard/seller/listings", icon: Home },
   { name: "Orders", href: "/dashboard/seller/orders", icon: ShoppingCart },
   { name: "Chat", href: "/dashboard/seller/chat", icon: MessageSquare },
-  { name: "Analytics", href: "/dashboard/seller/analytics", icon: BarChart3 },
-  { name: "Wallet", href: "/dashboard/seller/wallet", icon: Wallet },
   { name: "Settings", href: "/dashboard/seller/settings", icon: Settings },
 ];
 

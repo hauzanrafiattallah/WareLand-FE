@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { DollarSign, Home, Eye, TrendingUp } from "lucide-react";
+import { DollarSign, Home, Eye, TrendingUp, BarChart3 } from "lucide-react";
 
 export default function SellerDashboardPage() {
   return (
@@ -64,41 +64,51 @@ export default function SellerDashboardPage() {
         </Card>
       </div>
 
-      {/* RECENT ACTIVITY Placeholder */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card className="h-[300px]">
-            <CardHeader>
-                <CardTitle>Recent Sales</CardTitle>
-            </CardHeader>
-            <CardContent className="flex items-center justify-center h-[200px] text-gray-400 border-dashed border-2 border-gray-100 rounded-lg m-4">
-                Chart Visualization Placeholder
-            </CardContent>
+      {/* CHARTS & INSIGHTS (Merged from Analytics) */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {/* Statistik Kunjungan Chart */}
+        <Card className="h-[400px]">
+          <CardHeader>
+            <CardTitle>Statistik Kunjungan</CardTitle>
+          </CardHeader>
+          <CardContent className="flex items-center justify-center h-[300px]">
+            {/* Placeholder for Chart */}
+            <div className="w-full h-full bg-gray-50 rounded-lg border-2 border-dashed border-gray-200 flex flex-col items-center justify-center text-gray-400">
+              <BarChart3 className="w-12 h-12 mb-3" />
+              <p>Grafik Kunjungan (7 Hari Terakhir)</p>
+              <p className="text-xs">Chart Component Visualization</p>
+            </div>
+          </CardContent>
         </Card>
-        <Card className="h-[300px]">
-            <CardHeader>
-                <CardTitle>Recent Enquiries</CardTitle>
-            </CardHeader>
-             <CardContent>
-                <div className="space-y-4">
-                    {[1, 2, 3].map((i) => (
-                        <div key={i} className="flex items-center justify-between border-b pb-2 last:border-0">
-                            <div className="flex items-center gap-3">
-                                <div className="w-8 h-8 bg-gray-200 rounded-full" />
-                                <div>
-                                    <p className="text-sm font-medium">Budi Santoso</p>
-                                    <p className="text-xs text-gray-500">Asking about Villa Lembang</p>
-                                </div>
-                            </div>
-                            <span className="text-xs text-gray-400">2h ago</span>
-                        </div>
-                    ))}
+
+        {/* Produk Populer List */}
+        <Card className="h-[400px] overflow-y-auto">
+          <CardHeader>
+            <CardTitle>Produk Populer</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-6">
+              {[
+                { name: "Rumah Modern Minimalis", views: 450, sales: 3 },
+                { name: "Villa Pemandangan Gunung", views: 320, sales: 1 },
+                { name: "Tanah Kavling", views: 210, sales: 4 },
+                { name: "Apartemen Studio", views: 180, sales: 0 },
+                { name: "Ruko Strategis", views: 150, sales: 1 },
+              ].map((item, idx) => (
+                <div key={idx} className="flex items-center justify-between">
+                  <div>
+                    <p className="font-medium text-gray-900">{item.name}</p>
+                    <p className="text-xs text-gray-500">{item.views} Dilihat</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-bold text-[#39D177]">{item.sales} Terjual</p>
+                  </div>
                 </div>
-            </CardContent>
+              ))}
+            </div>
+          </CardContent>
         </Card>
       </div>
     </div>
   );
 }
-
-
-
