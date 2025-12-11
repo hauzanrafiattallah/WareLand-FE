@@ -43,7 +43,7 @@ export default function BuyerLayout({
               <Link key={item.href} href={item.href}>
                 <Button
                   variant={isActive ? "default" : "ghost"}
-                  className={`w-full justify-start gap-3 ${
+                  className={`w-full justify-start gap-3 cursor-pointer ${
                     isActive
                       ? "bg-[#39D177] hover:bg-[#2FAE63] text-white"
                       : "text-gray-600 hover:bg-gray-100"

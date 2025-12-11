@@ -1,17 +1,15 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
+import {
+  Home,
+  LayoutDashboard,
+  MessageSquare,
+  Settings,
+  ShoppingCart,
+} from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  LayoutDashboard,
-  Home,
-  ShoppingCart,
-  MessageSquare,
-  BarChart3,
-  Wallet,
-  Settings,
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
 
 const sellerNavItems = [
   { name: "Dashboard", href: "/dashboard/seller", icon: LayoutDashboard },
@@ -43,7 +41,7 @@ export default function SellerLayout({
               <Link key={item.href} href={item.href}>
                 <Button
                   variant={isActive ? "default" : "ghost"}
-                  className={`w-full justify-start gap-3 ${
+                  className={`w-full justify-start gap-3 cursor-pointer ${
                     isActive
                       ? "bg-[#39D177] hover:bg-[#2FAE63] text-white"
                       : "text-gray-600 hover:bg-gray-100"
@@ -59,9 +57,7 @@ export default function SellerLayout({
       </aside>
 
       {/* MAIN CONTENT AREA */}
-      <main className="flex-1 p-6 lg:p-10 overflow-auto">
-        {children}
-      </main>
+      <main className="flex-1 p-6 lg:p-10 overflow-auto">{children}</main>
     </div>
   );
 }
