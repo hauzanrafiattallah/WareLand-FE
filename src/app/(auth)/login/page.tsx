@@ -42,6 +42,8 @@ export default function LoginPage() {
       if (response.success) {
         toast.success(response.message);
 
+        localStorage.setItem("user", JSON.stringify(response.data));
+
         const userRole = response.data.role;
         if (userRole === "BUYER") {
           router.push("/dashboard/buyer");
