@@ -10,6 +10,23 @@ export const axiosInstance = axios.create({
   },
 });
 
+// Interceptor untuk menyisipkan JWT secara otomatis di setiap request
+axiosInstance.interceptors.request.use((config) => {
+  try {
+    // Simpan token login Anda dengan key "accessToken"
+    if (typeof window !== "undefined") {
+      const token = localStorage.getItem("accessToken");
+      if (token) {
+        config.headers = config.headers ?? {};
+        (config.headers as any).Authorization = `Bearer ${token}`;
+      }
+    }
+  } catch (_) {
+    // abaikan jika storage tidak tersedia
+  }
+  return config;
+});
+
 // Interceptor untuk handle error global (opsional tapi recommended)
 axiosInstance.interceptors.response.use(
   (response) => response,

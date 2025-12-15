@@ -10,6 +10,13 @@ export interface UpdateUserPayload {
 }
 
 export const userService = {
+  // Mengambil profil user dari token (JWT) menggunakan endpoint /api/auth/me
+  getMe: async () => {
+    const response = await axiosInstance.get(`/api/auth/me`);
+    return response.data;
+  },
+
+  // Deprecated: gunakan getMe() jika ingin mengambil profil user yang sedang login
   getProfile: async (id: number) => {
     const response = await axiosInstance.get(`/api/users/${id}`);
     return response.data;

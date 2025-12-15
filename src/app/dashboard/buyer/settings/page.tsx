@@ -30,15 +30,15 @@ export default function BuyerProfileSettings() {
     if (storedUser) {
       const parsedUser = JSON.parse(storedUser);
       setUserId(parsedUser.id);
-      fetchUserProfile(parsedUser.id);
+      fetchUserProfile();
     } else {
       router.push("/login");
     }
   }, [router]);
 
-  const fetchUserProfile = async (id: number) => {
+  const fetchUserProfile = async () => {
     try {
-      const response = await userService.getProfile(id);
+      const response = await userService.getMe();
       if (response.success || response.data) {
         setProfile((prev) => ({
           ...prev,
