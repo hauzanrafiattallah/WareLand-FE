@@ -5,6 +5,8 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { authService, loginSchema } from "@/services/auth.service";
+import { userService } from "@/services/user.service";
+import { getDashboardPathByRole, normalizeRole } from "@/lib/auth";
 import { AxiosError } from "axios";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 import Link from "next/link";
@@ -41,17 +43,34 @@ export default function LoginPage() {
 
       if (response.success) {
         toast.success(response.message);
+        // Simpan token untuk Authorization header (dipakai oleh /api/auth/me)
+        const token = (response as any)?.data?.token || (response as any)?.data?.accessToken;
+        if (token) {
+          localStorage.setItem("accessToken", token);
+        }
 
+        // Simpan user seadanya dari response
         localStorage.setItem("user", JSON.stringify(response.data));
 
-        const userRole = response.data.role;
-        if (userRole === "BUYER") {
-          router.push("/dashboard/buyer");
-        } else if (userRole === "SELLER") {
-          router.push("/dashboard/seller");
-        } else {
-          router.push("/dashboard");
+        // Tentukan role dan tujuan redirect secara lebih robust
+        let role = normalizeRole((response as any)?.data?.role);
+
+        // Jika role belum jelas dari response, coba ambil dari /me
+        if (!role && token) {
+          try {
+            const me = await userService.getMe();
+            role = normalizeRole(me?.data?.role);
+            // Update cache user bila info lebih lengkap
+            if (me?.data) {
+              localStorage.setItem("user", JSON.stringify(me.data));
+            }
+          } catch (_) {
+            // abaikan error; akan pakai default safe route
+          }
         }
+
+        const target = getDashboardPathByRole(role);
+        router.push(target);
       }
     } catch (error) {
       if (error instanceof AxiosError) {
