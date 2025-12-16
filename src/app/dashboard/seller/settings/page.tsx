@@ -1,109 +1,25 @@
 "use client";
 
-import { UpdateUserPayload, userService } from "@/services/user.service";
-import { AxiosError } from "axios";
+import { useSetting } from "@/hooks/useSetting";
 import { CheckCircle, Eye, EyeOff, Loader2 } from "lucide-react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import { toast } from "sonner";
 
 export default function SellerSettingsPage() {
-  const router = useRouter();
-  const [editMode, setEditMode] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [userId, setUserId] = useState<number | null>(null);
-
-  const [showOldPassword, setShowOldPassword] = useState(false);
-  const [showNewPassword, setShowNewPassword] = useState(false);
-
-  const [profile, setProfile] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    oldPassword: "",
-    newPassword: "",
-  });
-
-  useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      const parsedUser = JSON.parse(storedUser);
-      setUserId(parsedUser.id);
-      fetchUserProfile();
-    } else {
-      router.push("/login");
-    }
-  }, [router]);
-
-  const fetchUserProfile = async () => {
-    try {
-      const response = await userService.getMe();
-      if (response.success || response.data) {
-        setProfile((prev) => ({
-          ...prev,
-          name: response.data.name || "",
-          email: response.data.email || "",
-          phone: response.data.phoneNumber || "",
-        }));
-      }
-    } catch (error) {
-      toast.error("Gagal memuat data toko");
-    }
-  };
-
-  const handleSave = async () => {
-    if (!userId) return;
-    setIsLoading(true);
-
-    try {
-      const payload: UpdateUserPayload = {
-        name: profile.name,
-        email: profile.email,
-        phoneNumber: profile.phone,
-      };
-
-      if (profile.newPassword) {
-        payload.oldPassword = profile.oldPassword;
-        payload.newPassword = profile.newPassword;
-      }
-
-      const response = await userService.updateProfile(userId, payload);
-
-      if (response.success) {
-        toast.success("Pengaturan toko berhasil diperbarui!");
-        setEditMode(false);
-
-        const storedUser = localStorage.getItem("user");
-        if (storedUser) {
-          const parsedUser = JSON.parse(storedUser);
-          const updatedUser = {
-            ...parsedUser,
-            name: profile.name,
-            email: profile.email,
-            phoneNumber: profile.phone,
-          };
-          localStorage.setItem("user", JSON.stringify(updatedUser));
-        }
-
-        setProfile((prev) => ({
-          ...prev,
-          oldPassword: "",
-          newPassword: "",
-        }));
-      }
-    } catch (error) {
-      if (error instanceof AxiosError) {
-        toast.error(
-          error.response?.data?.message || "Gagal memperbarui pengaturan toko"
-        );
-      } else {
-        toast.error("Terjadi kesalahan sistem");
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const {
+    profile,
+    setProfile,
+    editMode,
+    setEditMode,
+    isLoading,
+    saveProfile,
+    showOldPassword,
+    setShowOldPassword,
+    showNewPassword,
+    setShowNewPassword,
+  } = useSetting(
+    "Pengaturan toko berhasil diperbarui!",
+    "Gagal memperbarui pengaturan toko"
+  );
 
   return (
     <main className="p-6 sm:p-10 max-w-3xl mx-auto">
@@ -272,7 +188,7 @@ export default function SellerSettingsPage() {
             </button>
 
             <button
-              onClick={handleSave}
+              onClick={saveProfile}
               disabled={isLoading}
               className="w-full sm:w-auto px-8 py-3 sm:py-2 rounded-xl sm:rounded-full bg-[#39D177] text-white hover:bg-[#2FAE63] font-medium transition shadow-sm hover:shadow flex items-center justify-center gap-2 disabled:opacity-50"
             >

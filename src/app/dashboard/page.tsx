@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { getDashboardPathByRole, normalizeRole } from "@/lib/auth";
-import { userService } from "@/services/user.service";
+import { userService } from "@/services/user/user.service";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export default function DashboardRedirectPage() {
   const router = useRouter();

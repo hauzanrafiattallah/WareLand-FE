@@ -1,6 +1,5 @@
-import axios from "axios";
+import axios, { AxiosError, InternalAxiosRequestConfig } from "axios";
 
-// Base URL dari environment variable
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 export const axiosInstance = axios.create({
@@ -10,27 +9,25 @@ export const axiosInstance = axios.create({
   },
 });
 
-// Interceptor untuk menyisipkan JWT secara otomatis di setiap request
-axiosInstance.interceptors.request.use((config) => {
-  try {
-    // Simpan token login Anda dengan key "accessToken"
+axiosInstance.interceptors.request.use(
+  (config: InternalAxiosRequestConfig) => {
     if (typeof window !== "undefined") {
       const token = localStorage.getItem("accessToken");
       if (token) {
-        config.headers = config.headers ?? {};
-        (config.headers as any).Authorization = `Bearer ${token}`;
+        config.headers.Authorization = `Bearer ${token}`;
       }
     }
-  } catch (_) {
-    // abaikan jika storage tidak tersedia
+    return config;
   }
-  return config;
-});
+);
 
-// Interceptor untuk handle error global (opsional tapi recommended)
 axiosInstance.interceptors.response.use(
   (response) => response,
-  (error) => {
+  (error: AxiosError) => {
+    if (error.response?.status === 401) {
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("user");
+    }
     return Promise.reject(error);
   }
 );

@@ -4,69 +4,31 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { authService, registerSchema } from "@/services/auth.service";
-import { AxiosError } from "axios";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { toast } from "sonner";
+
+import { useRegister } from "@/hooks/useRegister";
 
 export default function RegisterPage() {
-  const router = useRouter();
-
-  const [role, setRole] = useState<"pembeli" | "penjual">("pembeli");
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
-  const handleRegister = async () => {
-    setIsLoading(true);
-    try {
-      const validationResult = registerSchema.safeParse({
-        username,
-        email,
-        password,
-        confirmPassword,
-        role,
-      });
-
-      if (!validationResult.success) {
-        const errorMessage = validationResult.error.issues[0].message;
-        toast.error(errorMessage);
-        setIsLoading(false);
-        return;
-      }
-
-      const apiRole = role === "pembeli" ? "BUYER" : "SELLER";
-
-      const response = await authService.register({
-        username: username,
-        password: password,
-        email: email,
-        role: apiRole,
-        name: username,
-        phoneNumber: "08123456789",
-      });
-
-      if (response.success) {
-        toast.success("Registrasi Berhasil! Silakan Login.");
-        router.push("/login");
-      }
-    } catch (error) {
-      if (error instanceof AxiosError) {
-        toast.error(error.response?.data?.message || "Gagal registrasi");
-      } else {
-        toast.error("Terjadi kesalahan sistem");
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  
+  const {
+    role,
+    username,
+    email,
+    password,
+    confirmPassword,
+    isLoading,
+    showPassword,
+    showConfirmPassword,
+    setRole,
+    setUsername,
+    setEmail,
+    setPassword,
+    setConfirmPassword,
+    setShowPassword,
+    setShowConfirmPassword,
+    handleRegister,
+  } = useRegister();
 
   return (
     <div className="w-full min-h-screen flex items-center justify-center bg-[#D6F5E7] px-4">
