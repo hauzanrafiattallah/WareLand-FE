@@ -29,7 +29,7 @@ export default function Navbar() {
 
         {/* CTA */}
         <Link
-          href="/register"
+          href="/login"
           className="px-6 py-2 rounded-full text-white bg-[#39D177] hover:bg-[#2FAE63] transition font-medium"
         >
           Start Now

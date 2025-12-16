@@ -44,11 +44,6 @@ export function useLogin() {
       localStorage.setItem("accessToken", response.data.token);
       localStorage.setItem("user", JSON.stringify(response.data.profile));
 
-      document.cookie = `accessToken=${response.data.token}; path=/`;
-      document.cookie = `user=${encodeURIComponent(
-        JSON.stringify(response.data.profile)
-      )}; path=/`;
-
       // Redirect berdasarkan role
       const role = normalizeRole(response.data.profile.role);
       router.push(getDashboardPathByRole(role));

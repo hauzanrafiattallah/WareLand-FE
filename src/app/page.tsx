@@ -31,13 +31,6 @@ export default function LandingPage() {
             >
               Register Now
             </Link>
-
-            <Link
-              href="#learn"
-              className="px-6 py-3 rounded-full text-[#39D177] bg-[#D6F5E7] border border-[#39D177]/40 hover:bg-[#C8EFD8] transition font-medium"
-            >
-              Learn More
-            </Link>
           </div>
         </div>
 
