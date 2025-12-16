@@ -8,9 +8,10 @@ import {
 
 export const authService = {
   login: async (payload: LoginPayload) => {
-    const { data } = await axiosInstance.post<
-      ApiResponse<LoginResponseData>
-    >("/api/auth/login", payload);
+    const { data } = await axiosInstance.post<ApiResponse<LoginResponseData>>(
+      "/api/auth/login",
+      payload
+    );
     return data;
   },
 
@@ -18,6 +19,13 @@ export const authService = {
     const { data } = await axiosInstance.post<
       ApiResponse<RegisterResponseData>
     >("/api/auth/register", payload);
+    return data;
+  },
+
+  logout: async () => {
+    const { data } = await axiosInstance.post<ApiResponse<null>>(
+      "/api/auth/logout"
+    );
     return data;
   },
 };

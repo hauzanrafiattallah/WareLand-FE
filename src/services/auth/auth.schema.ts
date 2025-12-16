@@ -10,7 +10,9 @@ export const registerSchema = z
     username: z.string().min(3, "Username minimal 3 karakter"),
     email: z.string().email("Format email tidak valid"),
     password: z.string().min(6, "Password minimal 6 karakter"),
-    confirmPassword: z.string().min(6, "Konfirmasi password minimal 6 karakter"),
+    confirmPassword: z
+      .string()
+      .min(6, "Konfirmasi password minimal 6 karakter"),
     role: z.enum(["pembeli", "penjual"]),
   })
   .refine((data) => data.password === data.confirmPassword, {

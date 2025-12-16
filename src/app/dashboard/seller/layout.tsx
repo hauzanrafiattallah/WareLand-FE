@@ -1,9 +1,12 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { useLogout } from "@/hooks/auth/useLogout";
+import { useRoleGuard } from "@/hooks/useRoleGuard";
 import {
   Home,
   LayoutDashboard,
+  LogOut,
   MessageSquare,
   Settings,
   ShoppingCart,
@@ -24,24 +27,28 @@ export default function SellerLayout({
 }: {
   children: React.ReactNode;
 }) {
+  useRoleGuard("SELLER");
+
   const pathname = usePathname();
+  const { logout } = useLogout();
 
   return (
     <div className="flex flex-col lg:flex-row min-h-screen bg-gray-50">
-      {/* SELLER SIDEBAR */}
-      <aside className="w-full lg:w-64 bg-white border-r border-gray-200 lg:min-h-screen p-6">
+      <aside className="w-full lg:w-64 bg-white border-r border-gray-200 lg:min-h-screen p-6 flex flex-col">
         <div className="mb-8">
           <h2 className="text-xl font-bold text-gray-900">Seller Panel</h2>
           <p className="text-sm text-gray-500">Manage your business</p>
         </div>
-        <nav className="space-y-2">
+
+        <nav className="space-y-2 flex-1">
           {sellerNavItems.map((item) => {
             const isActive = pathname === item.href;
+
             return (
               <Link key={item.href} href={item.href}>
                 <Button
                   variant={isActive ? "default" : "ghost"}
-                  className={`w-full justify-start gap-3 cursor-pointer ${
+                  className={`w-full justify-start gap-3 ${
                     isActive
                       ? "bg-[#39D177] hover:bg-[#2FAE63] text-white"
                       : "text-gray-600 hover:bg-gray-100"
@@ -54,9 +61,19 @@ export default function SellerLayout({
             );
           })}
         </nav>
+
+        <div className="pt-4 border-t border-gray-200">
+          <Button
+            variant="ghost"
+            onClick={logout}
+            className="w-full justify-start gap-3 text-red-600 hover:bg-red-50 hover:text-red-700"
+          >
+            <LogOut className="w-4 h-4" />
+            Logout
+          </Button>
+        </div>
       </aside>
 
-      {/* MAIN CONTENT AREA */}
       <main className="flex-1 p-6 lg:p-10 overflow-auto">{children}</main>
     </div>
   );

@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 import Link from "next/link";
 
-import { useRegister } from "@/hooks/useRegister";
+import { useRegister } from "@/hooks/auth/useRegister";
 
 export default function RegisterPage() {
   
