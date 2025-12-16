@@ -4,87 +4,22 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { authService, loginSchema } from "@/services/auth.service";
-import { userService } from "@/services/user.service";
-import { getDashboardPathByRole, normalizeRole } from "@/lib/auth";
-import { AxiosError } from "axios";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { toast } from "sonner";
+
+import { useLogin } from "@/hooks/useLogin";
 
 export default function LoginPage() {
-  const router = useRouter();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
-
-  const handleLogin = async () => {
-    setIsLoading(true);
-    try {
-      const validationResult = loginSchema.safeParse({
-        username: email,
-        password,
-      });
-
-      if (!validationResult.success) {
-        const errorMessage = validationResult.error.issues[0].message;
-        toast.error(errorMessage);
-        setIsLoading(false);
-        return;
-      }
-
-      const response = await authService.login({
-        username: email,
-        password: password,
-      });
-
-      if (response.success) {
-        toast.success(response.message);
-        // Simpan token untuk Authorization header (dipakai oleh /api/auth/me)
-        const token = (response as any)?.data?.token || (response as any)?.data?.accessToken;
-        if (token) {
-          localStorage.setItem("accessToken", token);
-        }
-
-        // Simpan user seadanya dari response
-        localStorage.setItem("user", JSON.stringify(response.data));
-
-        // Tentukan role dan tujuan redirect secara lebih robust
-        let role = normalizeRole((response as any)?.data?.role);
-
-        // Jika role belum jelas dari response, coba ambil dari /me
-        if (!role && token) {
-          try {
-            const me = await userService.getMe();
-            role = normalizeRole(me?.data?.role);
-            // Update cache user bila info lebih lengkap
-            if (me?.data) {
-              localStorage.setItem("user", JSON.stringify(me.data));
-            }
-          } catch (_) {
-            // abaikan error; akan pakai default safe route
-          }
-        }
-
-        const target = getDashboardPathByRole(role);
-        router.push(target);
-      }
-    } catch (error) {
-      if (error instanceof AxiosError) {
-        toast.error(
-          error.response?.data?.message ||
-            "Gagal login, periksa kredensial Anda"
-        );
-      } else {
-        toast.error("Terjadi kesalahan sistem");
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const {
+    email,
+    password,
+    isLoading,
+    showPassword,
+    setEmail,
+    setPassword,
+    setShowPassword,
+    handleLogin,
+  } = useLogin();
 
   return (
     <div className="w-full min-h-screen flex items-center justify-center bg-[#D6F5E7] px-4">

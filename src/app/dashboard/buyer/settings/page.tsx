@@ -1,6 +1,6 @@
 "use client";
 
-import { UpdateUserPayload, userService } from "@/services/user.service";
+import { UpdateUserPayload, userService } from "@/services/user/user.service";
 import { AxiosError } from "axios";
 import { CheckCircle, Eye, EyeOff, Loader2 } from "lucide-react";
 import Image from "next/image";
