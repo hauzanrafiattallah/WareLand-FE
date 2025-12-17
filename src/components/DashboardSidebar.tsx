@@ -91,7 +91,7 @@ export default function DashboardSidebar({
             <Button
               variant="ghost"
               onClick={onLogout}
-              className="w-full justify-start gap-3 text-red-600 hover:bg-red-50"
+              className="w-full justify-start gap-3 text-red-600 hover:bg-red-50 cursor-pointer"
             >
               <LogOut className="w-4 h-4" />
               Logout

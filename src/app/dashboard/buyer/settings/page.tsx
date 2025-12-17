@@ -19,7 +19,7 @@ export default function BuyerProfileSettings() {
   } = useSetting("Profil berhasil diperbarui!", "Gagal memperbarui profil");
 
   return (
-    <main className="p-6 sm:p-10 max-w-3xl mx-auto">
+    <main className="p-6 sm:p-10  mx-auto">
       <h1 className="text-3xl font-semibold text-gray-900 mb-1">
         User Profile & Settings
       </h1>
