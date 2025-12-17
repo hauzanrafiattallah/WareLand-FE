@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "WareLand - Transparent Property Transactions",
   description:
-    "WareLand leverages AI and blockchain to ensure transparent and protected property transactions. Join us to experience secure real estate dealings.",
+    "WareLand is a property marketplace platform that connects buyers and sellers to manage property listings, explore available properties, and conduct transparent and efficient real estate transactions.",
 };
 
 export default function RootLayout({
