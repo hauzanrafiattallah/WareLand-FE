@@ -36,57 +36,55 @@ const featuredProperties = [
 
 export default function BuyerHome() {
   return (
-    <main className="px-6 py-10">
-      {/* WELCOME */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">
-          Selamat Datang di WareLand 👋
+    <main className="w-full max-w-full px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-10 overflow-x-hidden">
+      <div className="mb-6 sm:mb-8">
+        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 break-words">
+          Selamat Datang di WareLand
         </h1>
-        <p className="text-gray-600 mt-1">
+        <p className="text-sm sm:text-base text-gray-600 mt-1 sm:mt-2">
           Temukan properti ideal sesuai kebutuhanmu dengan mudah dan cepat.
         </p>
       </div>
 
-      {/* SEARCH BAR */}
-      <div className="bg-white shadow-sm border rounded-xl p-4 flex items-center gap-3 mb-8">
-        <Search className="text-gray-500" />
-        <input
-          type="text"
-          placeholder="Cari properti berdasarkan lokasi, nama, atau tipe..."
-          className="flex-1 outline-none"
-        />
-        <button className="px-6 py-2 rounded-full bg-[#39D177] text-white hover:bg-[#2FAE63] transition">
+      <div className="bg-white shadow-sm border rounded-xl p-3 sm:p-4 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 mb-6 sm:mb-8 w-full">
+        <div className="flex items-center gap-3 flex-1 min-w-0">
+          <Search className="text-gray-500 w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0" />
+          <input
+            type="text"
+            placeholder="Cari properti berdasarkan lokasi, nama, atau tipe..."
+            className="flex-1 outline-none text-sm sm:text-base min-w-0"
+          />
+        </div>
+        <button className="px-6 py-2.5 sm:py-2 rounded-full bg-[#39D177] text-white hover:bg-[#2FAE63] transition text-sm sm:text-base whitespace-nowrap flex-shrink-0">
           Cari
         </button>
       </div>
 
-      {/* QUICK FILTERS */}
-      <div className="flex gap-3 mb-6 overflow-x-auto">
+      <div className="flex gap-2 sm:gap-3 mb-6 overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0">
         {["Rumah", "Apartment", "Villa", "Ruko", "Tanah"].map((item) => (
           <button
             key={item}
-            className="px-4 py-2 rounded-full border border-gray-300 bg-white hover:bg-gray-100 transition text-sm"
+            className="px-4 py-2 rounded-full border border-gray-300 bg-white hover:bg-gray-100 transition text-sm whitespace-nowrap flex-shrink-0"
           >
             {item}
           </button>
         ))}
       </div>
 
-      {/* FEATURED LISTINGS */}
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-semibold text-gray-900">
+      <div className="flex items-center justify-between mb-4 sm:mb-6 gap-2">
+        <h2 className="text-lg sm:text-xl font-semibold text-gray-900">
           Rekomendasi Untukmu
         </h2>
 
         <Link
           href="/dashboard/properties"
-          className="text-[#39D177] font-medium hover:underline"
+          className="text-[#39D177] font-medium hover:underline text-sm sm:text-base whitespace-nowrap flex-shrink-0"
         >
           Lihat Semua →
         </Link>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 w-full">
         {featuredProperties.map((property) => (
           <PropertyCard key={property.id} property={property} />
         ))}
