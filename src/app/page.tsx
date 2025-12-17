@@ -18,9 +18,8 @@ export default function LandingPage() {
           </h1>
 
           <p className="text-gray-600 max-w-md">
-            WareLand utilizes AI and blockchain to check contracts, assess agent
-            reputation, and detect fraud for transparent and protected
-            transactions.
+            WareLand helps you buy and sell properties easily through a
+            transparent and reliable property marketplace.
           </p>
 
           {/* BUTTONS */}
