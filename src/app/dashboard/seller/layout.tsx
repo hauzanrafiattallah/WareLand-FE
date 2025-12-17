@@ -1,26 +1,14 @@
 "use client";
 
+import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
+
 import { useLogout } from "@/hooks/auth/useLogout";
 import { useRoleGuard } from "@/hooks/useRoleGuard";
-import {
-  Home,
-  LayoutDashboard,
-  LogOut,
-  MessageSquare,
-  Settings,
-  ShoppingCart,
-} from "lucide-react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { useDashboardSidebar } from "@/hooks/useDashboardSidebar";
+import { useRoleNav } from "@/hooks/useRoleNav";
 
-const sellerNavItems = [
-  { name: "Dashboard", href: "/dashboard/seller", icon: LayoutDashboard },
-  { name: "My Listings", href: "/dashboard/seller/listings", icon: Home },
-  { name: "Orders", href: "/dashboard/seller/orders", icon: ShoppingCart },
-  { name: "Chat", href: "/dashboard/seller/chat", icon: MessageSquare },
-  { name: "Settings", href: "/dashboard/seller/settings", icon: Settings },
-];
+import DashboardSidebar from "@/components/DashboardSidebar";
 
 export default function SellerLayout({
   children,
@@ -29,52 +17,32 @@ export default function SellerLayout({
 }) {
   useRoleGuard("SELLER");
 
-  const pathname = usePathname();
   const { logout } = useLogout();
+  const sidebar = useDashboardSidebar();
+  const nav = useRoleNav("SELLER");
 
   return (
-    <div className="flex flex-col lg:flex-row min-h-screen bg-gray-50">
-      <aside className="w-full lg:w-64 bg-white border-r border-gray-200 lg:min-h-screen p-6 flex flex-col">
-        <div className="mb-8">
-          <h2 className="text-xl font-bold text-gray-900">Seller Panel</h2>
-          <p className="text-sm text-gray-500">Manage your business</p>
-        </div>
+    <div className="min-h-screen bg-gray-50 flex">
+      <DashboardSidebar
+        {...nav}
+        isOpen={sidebar.isOpen}
+        onClose={sidebar.close}
+        onLogout={logout}
+      />
 
-        <nav className="space-y-2 flex-1">
-          {sellerNavItems.map((item) => {
-            const isActive = pathname === item.href;
-
-            return (
-              <Link key={item.href} href={item.href}>
-                <Button
-                  variant={isActive ? "default" : "ghost"}
-                  className={`w-full justify-start gap-3 ${
-                    isActive
-                      ? "bg-[#39D177] hover:bg-[#2FAE63] text-white"
-                      : "text-gray-600 hover:bg-gray-100"
-                  }`}
-                >
-                  <item.icon className="w-4 h-4" />
-                  {item.name}
-                </Button>
-              </Link>
-            );
-          })}
-        </nav>
-
-        <div className="pt-4 border-t border-gray-200">
-          <Button
-            variant="ghost"
-            onClick={logout}
-            className="w-full justify-start gap-3 text-red-600 hover:bg-red-50 hover:text-red-700"
-          >
-            <LogOut className="w-4 h-4" />
-            Logout
+      <div className="flex-1 flex flex-col">
+        {/* Mobile Header */}
+        <header className="lg:hidden bg-white border-b px-4 py-3 flex items-center">
+          <Button variant="ghost" size="icon" onClick={sidebar.open}>
+            <Menu className="w-5 h-5" />
           </Button>
-        </div>
-      </aside>
+          <span className="ml-3 font-semibold">Seller Dashboard</span>
+        </header>
 
-      <main className="flex-1 p-6 lg:p-10 overflow-auto">{children}</main>
+        <main className="flex-1 p-6 lg:p-10 overflow-auto">
+          {children}
+        </main>
+      </div>
     </div>
   );
 }
