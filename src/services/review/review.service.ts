@@ -10,6 +10,13 @@ export const reviewService = {
     return data;
   },
 
+  getByBuyer: async (buyerId: number) => {
+    const { data } = await axiosInstance.get<ReviewListResponse>(
+      `/api/reviews/buyer/${buyerId}`
+    );
+    return data;
+  },
+
   update: async (
     reviewId: number,
     buyerId: number,
