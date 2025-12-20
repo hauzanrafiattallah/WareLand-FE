@@ -2,35 +2,60 @@
 
 import { useEffect, useState } from "react";
 import { propertyService } from "@/services/property/property.service";
-import { PropertyResponse } from "@/services/property/property.response";
+import { Property } from "@/services/property/property.types";
+
+interface UseSellerPropertyState {
+  properties: Property[];
+  loading: boolean;
+  error: string | null;
+}
 
 export function useSellerProperty() {
-  const [properties, setProperties] = useState<PropertyResponse[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
+  const [state, setState] = useState<UseSellerPropertyState>({
+    properties: [],
+    loading: false,
+    error: null,
+  });
 
-  const fetchProperties = async (): Promise<void> => {
-    setLoading(true);
-    setError(null);
+  const fetchProperties = async () => {
+    setState((prev) => ({
+      ...prev,
+      loading: true,
+      error: null,
+    }));
 
     try {
-      const res = await propertyService.getAll();
-      setProperties(res.data);
+      const properties = await propertyService.getAll();
+      setState({
+        properties,
+        loading: false,
+        error: null,
+      });
     } catch {
-      setError("Gagal mengambil data properti");
-    } finally {
-      setLoading(false);
+      setState({
+        properties: [],
+        loading: false,
+        error: "Gagal mengambil data properti",
+      });
     }
   };
 
-  const deleteProperty = async (id: number): Promise<void> => {
+  const deleteProperty = async (id: number) => {
+    setState((prev) => ({
+      ...prev,
+      loading: true,
+      error: null,
+    }));
+
     try {
       await propertyService.delete(id);
-      setProperties((prev) =>
-        prev.filter((property) => property.propertyId !== id)
-      );
+      await fetchProperties();
     } catch {
-      setError("Gagal menghapus properti");
+      setState((prev) => ({
+        ...prev,
+        loading: false,
+        error: "Gagal menghapus properti",
+      }));
     }
   };
 
@@ -39,9 +64,9 @@ export function useSellerProperty() {
   }, []);
 
   return {
-    properties,
-    loading,
-    error,
+    properties: state.properties,
+    loading: state.loading,
+    error: state.error,
     refetch: fetchProperties,
     deleteProperty,
   };

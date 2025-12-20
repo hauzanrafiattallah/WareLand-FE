@@ -1,35 +1,37 @@
 import { axiosInstance } from "@/lib/axios";
-import { CreatePropertyPayload, UpdatePropertyPayload } from "./property.payload";
-import { PropertyResponse } from "./property.response";
-
-interface ApiResponse<T> {
-  success: boolean;
-  message: string | null;
-  data: T;
-}
+import {
+  PropertyListResponse,
+  PropertyCreatePayload,
+  ApiResponse,
+  Property,
+} from "./property.types";
 
 export const propertyService = {
-  create(payload: CreatePropertyPayload) {
-    return axiosInstance
-      .post<ApiResponse<PropertyResponse>>("/api/seller/properties", payload)
-      .then(res => res.data);
+  async getAll(): Promise<Property[]> {
+    const res = await axiosInstance.get<PropertyListResponse>(
+      "/api/seller/properties"
+    );
+    return res.data.data;
   },
 
-  getAll() {
-    return axiosInstance
-      .get<ApiResponse<PropertyResponse[]>>("/api/seller/properties")
-      .then(res => res.data);
+  async create(payload: PropertyCreatePayload) {
+    const res = await axiosInstance.post<ApiResponse<Property>>(
+      "/api/seller/properties",
+      payload
+    );
+    return res.data.data;
   },
 
-  update(id: number, payload: UpdatePropertyPayload) {
-    return axiosInstance
-      .put<ApiResponse<null>>(`/api/seller/properties/${id}`, payload)
-      .then(res => res.data);
+  async update(id: number, payload: PropertyCreatePayload) {
+    await axiosInstance.put(
+      `/api/seller/properties/${id}`,
+      payload
+    );
   },
 
-  delete(id: number) {
-    return axiosInstance
-      .delete<ApiResponse<null>>(`/api/seller/properties/${id}`)
-      .then(res => res.data);
+  async delete(id: number) {
+    await axiosInstance.delete(
+      `/api/seller/properties/${id}`
+    );
   },
 };
