@@ -1,37 +1,27 @@
 import { axiosInstance } from "@/lib/axios";
 import {
-  PropertyListResponse,
-  PropertyCreatePayload,
   ApiResponse,
   Property,
+  CreatePropertyPayload,
+  UpdatePropertyPayload,
 } from "./property.types";
 
-export const propertyService = {
-  async getAll(): Promise<Property[]> {
-    const res = await axiosInstance.get<PropertyListResponse>(
-      "/api/seller/properties"
-    );
-    return res.data.data;
+const BASE_PATH = "/api/seller/properties";
+
+export const PropertyService = {
+  create(payload: CreatePropertyPayload): Promise<ApiResponse<Property>> {
+    return axiosInstance.post(BASE_PATH, payload).then((res) => res.data);
   },
 
-  async create(payload: PropertyCreatePayload) {
-    const res = await axiosInstance.post<ApiResponse<Property>>(
-      "/api/seller/properties",
-      payload
-    );
-    return res.data.data;
+  findAll(): Promise<ApiResponse<Property[]>> {
+    return axiosInstance.get(BASE_PATH).then((res) => res.data);
   },
 
-  async update(id: number, payload: PropertyCreatePayload) {
-    await axiosInstance.put(
-      `/api/seller/properties/${id}`,
-      payload
-    );
+  update(propertyId: number, payload: UpdatePropertyPayload): Promise<ApiResponse<null>> {
+    return axiosInstance.put(`${BASE_PATH}/${propertyId}`, payload).then((res) => res.data);
   },
 
-  async delete(id: number) {
-    await axiosInstance.delete(
-      `/api/seller/properties/${id}`
-    );
+  delete(propertyId: number): Promise<ApiResponse<null>> {
+    return axiosInstance.delete(`${BASE_PATH}/${propertyId}`).then((res) => res.data);
   },
 };

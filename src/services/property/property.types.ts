@@ -1,8 +1,20 @@
+export interface Seller {
+  userId: number;
+  username: string;
+  name: string;
+  email: string;
+  phoneNumber: string;
+  userRole: "SELLER";
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface Property {
   propertyId: number;
   address: string;
   price: number;
   description: string;
+  seller: Seller;
 }
 
 export interface ApiResponse<T> {
@@ -11,10 +23,18 @@ export interface ApiResponse<T> {
   data: T;
 }
 
-export type PropertyListResponse = ApiResponse<Property[]>;
-
-export interface PropertyCreatePayload {
+/**
+ * Payload CREATE property
+ */
+export interface CreatePropertyPayload {
   address: string;
   price: number;
   description?: string;
+}
+
+/**
+ * Payload UPDATE property
+ */
+export interface UpdatePropertyPayload extends CreatePropertyPayload {
+  propertyId: number;
 }

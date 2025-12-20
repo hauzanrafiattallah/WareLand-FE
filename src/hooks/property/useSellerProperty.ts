@@ -1,17 +1,17 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { propertyService } from "@/services/property/property.service";
+import { PropertyService } from "@/services/property/property.service";
 import { Property } from "@/services/property/property.types";
 
-interface UseSellerPropertyState {
+interface UsePropertyState {
   properties: Property[];
   loading: boolean;
   error: string | null;
 }
 
-export function useSellerProperty() {
-  const [state, setState] = useState<UseSellerPropertyState>({
+export function useProperty() {
+  const [state, setState] = useState<UsePropertyState>({
     properties: [],
     loading: false,
     error: null,
@@ -25,9 +25,10 @@ export function useSellerProperty() {
     }));
 
     try {
-      const properties = await propertyService.getAll();
+      const res = await PropertyService.findAll();
+
       setState({
-        properties,
+        properties: res.data,
         loading: false,
         error: null,
       });
@@ -40,7 +41,7 @@ export function useSellerProperty() {
     }
   };
 
-  const deleteProperty = async (id: number) => {
+  const deleteProperty = async (propertyId: number) => {
     setState((prev) => ({
       ...prev,
       loading: true,
@@ -48,7 +49,7 @@ export function useSellerProperty() {
     }));
 
     try {
-      await propertyService.delete(id);
+      await PropertyService.delete(propertyId);
       await fetchProperties();
     } catch {
       setState((prev) => ({
