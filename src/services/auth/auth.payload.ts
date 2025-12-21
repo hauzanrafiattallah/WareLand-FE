@@ -1,3 +1,4 @@
+// auth.payload.ts
 export type LoginPayload = {
   username: string;
   password: string;

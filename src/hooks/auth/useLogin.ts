@@ -3,6 +3,7 @@
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { toast } from "sonner";
 
 import { getDashboardPathByRole, normalizeRole } from "@/lib/auth";
 import { loginSchema } from "@/services/auth/auth.schema";
@@ -28,7 +29,9 @@ export function useLogin() {
       });
 
       if (!validation.success) {
-        setError(validation.error.issues[0].message);
+        const message = validation.error.issues[0].message;
+        setError(message);
+        toast.error(message);
         return;
       }
 
@@ -40,17 +43,21 @@ export function useLogin() {
       localStorage.setItem("accessToken", response.data.token);
       localStorage.setItem("user", JSON.stringify(response.data.profile));
 
+      toast.success("Login berhasil. Selamat datang!");
+
       const role = normalizeRole(response.data.profile.role);
       router.push(getDashboardPathByRole(role));
     } catch (err: unknown) {
+      let message = "Terjadi kesalahan sistem";
+
       if (axios.isAxiosError(err)) {
-        setError(
+        message =
           (err.response?.data as { message?: string })?.message ??
-            "Gagal login, periksa kredensial Anda"
-        );
-      } else {
-        setError("Terjadi kesalahan sistem");
+          "Gagal login, periksa kredensial Anda";
       }
+
+      setError(message);
+      toast.error(message);
     } finally {
       setIsLoading(false);
     }
