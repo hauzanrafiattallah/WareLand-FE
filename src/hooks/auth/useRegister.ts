@@ -3,6 +3,7 @@
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { toast } from "sonner";
 
 import { registerSchema } from "@/services/auth/auth.schema";
 import { authService } from "@/services/auth/auth.service";
@@ -13,14 +14,16 @@ export function useRegister() {
   const router = useRouter();
 
   const [role, setRole] = useState<RegisterRole>("pembeli");
-  const [username, setUsername] = useState<string>("");
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-  const [confirmPassword, setConfirmPassword] = useState<string>("");
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [showPassword, setShowPassword] = useState<boolean>(false);
-  const [showConfirmPassword, setShowConfirmPassword] =
-    useState<boolean>(false);
+  const [username, setUsername] = useState("");
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const handleRegister = async (): Promise<void> => {
@@ -30,39 +33,41 @@ export function useRegister() {
     try {
       const validation = registerSchema.safeParse({
         username,
+        name,
         email,
+        phoneNumber,
         password,
         confirmPassword,
         role,
       });
 
       if (!validation.success) {
-        setError(validation.error.issues[0].message);
+        const message = validation.error.issues[0].message;
+        setError(message);
+        toast.error(message);
         return;
       }
 
-      const apiRole: "BUYER" | "SELLER" =
-        role === "pembeli" ? "BUYER" : "SELLER";
+      const apiRole = role === "pembeli" ? "BUYER" : "SELLER";
 
       await authService.register({
         username,
-        password,
+        name,
         email,
+        phoneNumber,
+        password,
         role: apiRole,
-        name: username,
-        phoneNumber: "08123456789",
       });
 
+      toast.success("Registrasi berhasil. Silakan login.");
       router.push("/login");
-    } catch (err: unknown) {
-      if (axios.isAxiosError(err)) {
-        setError(
-          (err.response?.data as { message?: string })?.message ??
-            "Gagal registrasi"
-        );
-      } else {
-        setError("Terjadi kesalahan sistem");
-      }
+    } catch (err) {
+      const message = axios.isAxiosError(err)
+        ? err.response?.data?.message ?? "Gagal registrasi"
+        : "Terjadi kesalahan sistem";
+
+      setError(message);
+      toast.error(message);
     } finally {
       setIsLoading(false);
     }
@@ -71,7 +76,9 @@ export function useRegister() {
   return {
     role,
     username,
+    name,
     email,
+    phoneNumber,
     password,
     confirmPassword,
     isLoading,
@@ -81,7 +88,9 @@ export function useRegister() {
 
     setRole,
     setUsername,
+    setName,
     setEmail,
+    setPhoneNumber,
     setPassword,
     setConfirmPassword,
     setShowPassword,

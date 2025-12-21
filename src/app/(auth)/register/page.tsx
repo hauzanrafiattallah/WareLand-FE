@@ -10,11 +10,12 @@ import Link from "next/link";
 import { useRegister } from "@/hooks/auth/useRegister";
 
 export default function RegisterPage() {
-  
   const {
     role,
     username,
+    name,
     email,
+    phoneNumber,
     password,
     confirmPassword,
     isLoading,
@@ -22,7 +23,9 @@ export default function RegisterPage() {
     showConfirmPassword,
     setRole,
     setUsername,
+    setName,
     setEmail,
+    setPhoneNumber,
     setPassword,
     setConfirmPassword,
     setShowPassword,
@@ -33,6 +36,7 @@ export default function RegisterPage() {
   return (
     <div className="w-full min-h-screen flex items-center justify-center bg-[#D6F5E7] px-4">
       <Card className="w-full max-w-md p-10 rounded-2xl shadow-xl border border-[#39D177]/20 bg-white space-y-6">
+        {/* Header */}
         <div className="text-center space-y-1">
           <h1 className="text-3xl font-bold text-[#2FAE63]">Create Account</h1>
           <p className="text-gray-600 text-sm">
@@ -40,7 +44,9 @@ export default function RegisterPage() {
           </p>
         </div>
 
+        {/* Form */}
         <div className="space-y-4">
+          {/* Username */}
           <div className="space-y-1">
             <Label className="text-[#2FAE63] text-sm">Username</Label>
             <Input
@@ -52,6 +58,19 @@ export default function RegisterPage() {
             />
           </div>
 
+          {/* Nama Lengkap */}
+          <div className="space-y-1">
+            <Label className="text-[#2FAE63] text-sm">Nama Lengkap</Label>
+            <Input
+              placeholder="Masukkan nama lengkap"
+              className="border border-[#39D177]/40 focus-visible:ring-[#39D177] h-11 rounded-xl"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              disabled={isLoading}
+            />
+          </div>
+
+          {/* Email */}
           <div className="space-y-1">
             <Label className="text-[#2FAE63] text-sm">Email</Label>
             <Input
@@ -64,6 +83,19 @@ export default function RegisterPage() {
             />
           </div>
 
+          {/* Nomor Telepon */}
+          <div className="space-y-1">
+            <Label className="text-[#2FAE63] text-sm">Nomor Telepon</Label>
+            <Input
+              placeholder="08xxxxxxxxxx"
+              className="border border-[#39D177]/40 focus-visible:ring-[#39D177] h-11 rounded-xl"
+              value={phoneNumber}
+              onChange={(e) => setPhoneNumber(e.target.value)}
+              disabled={isLoading}
+            />
+          </div>
+
+          {/* Password */}
           <div className="space-y-1">
             <Label className="text-[#2FAE63] text-sm">Password</Label>
             <div className="relative">
@@ -78,13 +110,14 @@ export default function RegisterPage() {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-[#2FAE63]/70 hover:text-[#2FAE63] transition-colors cursor-pointer"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-[#2FAE63]/70 hover:text-[#2FAE63]"
               >
                 {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
             </div>
           </div>
 
+          {/* Konfirmasi Password */}
           <div className="space-y-1">
             <Label className="text-[#2FAE63] text-sm">
               Konfirmasi Password
@@ -101,21 +134,23 @@ export default function RegisterPage() {
               <button
                 type="button"
                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-[#2FAE63]/70 hover:text-[#2FAE63] transition-colors cursor-pointer"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-[#2FAE63]/70 hover:text-[#2FAE63]"
               >
                 {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
             </div>
           </div>
 
+          {/* Role */}
           <div className="space-y-2">
             <Label className="text-[#2FAE63] text-sm">Daftar sebagai:</Label>
 
             <div className="grid grid-cols-2 gap-2">
               <button
+                type="button"
                 onClick={() => setRole("pembeli")}
                 disabled={isLoading}
-                className={`h-11 rounded-xl border text-sm transition-colors cursor-pointer
+                className={`h-11 rounded-xl border text-sm transition-colors
                   ${
                     role === "pembeli"
                       ? "bg-[#39D177] text-white border-[#39D177]"
@@ -126,9 +161,10 @@ export default function RegisterPage() {
               </button>
 
               <button
+                type="button"
                 onClick={() => setRole("penjual")}
                 disabled={isLoading}
-                className={`h-11 rounded-xl border text-sm transition-colors cursor-pointer
+                className={`h-11 rounded-xl border text-sm transition-colors
                   ${
                     role === "penjual"
                       ? "bg-[#39D177] text-white border-[#39D177]"
@@ -141,10 +177,11 @@ export default function RegisterPage() {
           </div>
         </div>
 
+        {/* Submit */}
         <Button
           onClick={handleRegister}
           disabled={isLoading}
-          className="w-full bg-[#39D177] hover:bg-[#2FAE63] text-white text-[15px] py-5 rounded-full cursor-pointer disabled:cursor-not-allowed flex items-center justify-center"
+          className="w-full bg-[#39D177] hover:bg-[#2FAE63] text-white text-[15px] py-5 rounded-full flex items-center justify-center"
         >
           {isLoading ? (
             <Loader2 className="animate-spin h-5 w-5 text-white" />
@@ -153,6 +190,7 @@ export default function RegisterPage() {
           )}
         </Button>
 
+        {/* Footer */}
         <p className="text-sm text-center text-gray-700">
           Sudah punya akun?{" "}
           <Link
