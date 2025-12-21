@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useEffect, useState, useCallback } from "react";
 import { PropertyService } from "@/services/property/property.service";
 import { Property } from "@/services/property/property.types";
 import { AxiosError } from "axios";
+import { useCallback, useEffect, useState } from "react";
 
 export const useProperty = () => {
   const [properties, setProperties] = useState<Property[]>([]);
@@ -14,42 +14,27 @@ export const useProperty = () => {
     setLoading(true);
     setError(null);
 
-    // 🔹 CEK TOKEN DI FE
-    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
-    const userRole = typeof window !== "undefined" ? localStorage.getItem("userRole") : null;
+    const token = localStorage.getItem("accessToken");
+    const userRaw = localStorage.getItem("user");
+    const user = userRaw ? JSON.parse(userRaw) : null;
 
-    if (!token) {
-      setError("Silakan login kembali.");
-      setLoading(false);
-      return;
-    }
-
-    if (userRole !== "SELLER") {
+    if (!token || !user || user.role !== "SELLER") {
       setError("Akun kamu bukan seller.");
       setLoading(false);
       return;
     }
 
     try {
-      const response = await PropertyService.findAll();
-
-      if (!response.success) {
-        setError(response.message ?? "Gagal memuat property");
+      const res = await PropertyService.findAll();
+      if (!res.success) {
+        setError(res.message ?? "Gagal memuat properti");
         return;
       }
-
-      setProperties(response.data);
+      setProperties(res.data);
     } catch (err) {
-      if (err instanceof AxiosError) {
-        if (err.response?.status === 401) {
-          setError("Silakan login kembali.");
-          localStorage.removeItem("accessToken");
-          localStorage.removeItem("userRole");
-        } else if (err.response?.status === 403) {
-          setError("Akun kamu bukan seller.");
-        } else {
-          setError("Terjadi kesalahan pada server.");
-        }
+      if (err instanceof AxiosError && err.response?.status === 401) {
+        localStorage.clear();
+        setError("Silakan login kembali.");
       } else {
         setError("Terjadi kesalahan pada server.");
       }
@@ -59,26 +44,26 @@ export const useProperty = () => {
   }, []);
 
   useEffect(() => {
-    let isMounted = true;
-
-    const load = async () => {
-      if (!isMounted) return;
-      await fetchProperties();
-    };
-
-    load();
-
-    return () => {
-      isMounted = false;
-    };
+    fetchProperties();
   }, [fetchProperties]);
 
-  const createProperty = async (payload: { address: string; price: number; description: string }) => {
+  const createProperty = async (payload: {
+    address: string;
+    price: number;
+    description?: string;
+  }) => {
     await PropertyService.create(payload);
     await fetchProperties();
   };
 
-  const updateProperty = async (propertyId: number, payload: { address?: string; price?: number; description?: string }) => {
+  const updateProperty = async (
+    propertyId: number,
+    payload: {
+      address: string;
+      price: number;
+      description?: string;
+    }
+  ) => {
     await PropertyService.update(propertyId, payload);
     await fetchProperties();
   };
