@@ -1,4 +1,4 @@
-export type UserRole = "SELLER" | "BUYER" | "ADMIN";
+export type UserRole = "SELLER" | "BUYER";
 
 export interface UserProfile {
   id: number;
@@ -6,7 +6,7 @@ export interface UserProfile {
   name: string;
   email: string;
   phoneNumber: string;
-  role: UserRole; // ✅ SESUAI BACKEND
+  role: UserRole;
   createdAt: string;
   updatedAt: string;
 }

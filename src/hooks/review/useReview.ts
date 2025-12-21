@@ -2,16 +2,15 @@
 
 import { useCallback, useState } from "react";
 import { reviewService } from "@/services/review/review.service";
-import { Review } from "@/services/review/review.response";
+import { PublicReview, BuyerReview } from "@/services/review/review.types";
 import { UpdateReviewPayload } from "@/services/review/review.payload";
 
 export function useReview() {
-  const [reviews, setReviews] = useState<Review[]>([]);
-  const [myReviews, setMyReviews] = useState<Review[]>([]);
+  const [reviews, setReviews] = useState<PublicReview[]>([]);
+  const [myReviews, setMyReviews] = useState<BuyerReview[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // PUBLIC
   const fetchReviewsByProperty = useCallback(async (propertyId: number) => {
     try {
       setLoading(true);
@@ -24,13 +23,12 @@ export function useReview() {
     }
   }, []);
 
-  // PRIVATE
   const fetchReviewsByBuyer = useCallback(async (buyerId: number) => {
     try {
       const res = await reviewService.getByBuyer(buyerId);
       setMyReviews(res.data);
     } catch {
-      // ignore
+      setError("Gagal memuat review kamu");
     }
   }, []);
 
