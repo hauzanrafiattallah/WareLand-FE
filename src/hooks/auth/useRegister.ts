@@ -3,7 +3,6 @@
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { toast } from "sonner";
 
 import { registerSchema } from "@/services/auth/auth.schema";
 import { authService } from "@/services/auth/auth.service";
@@ -14,19 +13,21 @@ export function useRegister() {
   const router = useRouter();
 
   const [role, setRole] = useState<RegisterRole>("pembeli");
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [username, setUsername] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [confirmPassword, setConfirmPassword] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [showConfirmPassword, setShowConfirmPassword] =
+    useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleRegister = async () => {
+  const handleRegister = async (): Promise<void> => {
     setIsLoading(true);
+    setError(null);
 
     try {
-      // Validasi form (UI concern)
       const validation = registerSchema.safeParse({
         username,
         email,
@@ -36,15 +37,13 @@ export function useRegister() {
       });
 
       if (!validation.success) {
-        toast.error(validation.error.issues[0].message);
+        setError(validation.error.issues[0].message);
         return;
       }
 
-      //Mapping role ke format API
       const apiRole: "BUYER" | "SELLER" =
         role === "pembeli" ? "BUYER" : "SELLER";
 
-      //Call API (fire & forget)
       await authService.register({
         username,
         password,
@@ -54,15 +53,15 @@ export function useRegister() {
         phoneNumber: "08123456789",
       });
 
-      //Success flow
-      toast.success("Registrasi berhasil! Silakan login.");
       router.push("/login");
     } catch (err: unknown) {
-      //Error handling (robust & TS-safe)
       if (axios.isAxiosError(err)) {
-        toast.error(err.response?.data?.message ?? "Gagal registrasi");
+        setError(
+          (err.response?.data as { message?: string })?.message ??
+            "Gagal registrasi"
+        );
       } else {
-        toast.error("Terjadi kesalahan sistem");
+        setError("Terjadi kesalahan sistem");
       }
     } finally {
       setIsLoading(false);
@@ -70,7 +69,6 @@ export function useRegister() {
   };
 
   return {
-    // state
     role,
     username,
     email,
@@ -79,8 +77,8 @@ export function useRegister() {
     isLoading,
     showPassword,
     showConfirmPassword,
+    error,
 
-    // setter
     setRole,
     setUsername,
     setEmail,
@@ -89,7 +87,6 @@ export function useRegister() {
     setShowPassword,
     setShowConfirmPassword,
 
-    // action
     handleRegister,
   };
 }

@@ -1,22 +1,24 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { AxiosError } from "axios";
 import { useParams, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 import {
   AlertDialog,
-  AlertDialogTrigger,
+  AlertDialogAction,
+  AlertDialogCancel,
   AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogTitle,
   AlertDialogDescription,
   AlertDialogFooter,
-  AlertDialogCancel,
-  AlertDialogAction,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Textarea } from "@/components/ui/textarea";
 
 import { reviewService } from "@/services/review/review.service";
 
@@ -24,9 +26,6 @@ export default function EditReviewPage() {
   const { reviewId } = useParams<{ reviewId: string }>();
   const router = useRouter();
 
-  /**
-   * Ambil user dari localStorage (BENAR)
-   */
   const user =
     typeof window !== "undefined"
       ? JSON.parse(localStorage.getItem("user") || "null")
@@ -34,13 +33,11 @@ export default function EditReviewPage() {
 
   const buyerId: number | undefined = user?.id;
 
-  const [rating, setRating] = useState<number>(5);
+  const [rating, setRating] = useState<number | null>(null);
   const [comment, setComment] = useState<string>("");
   const [loading, setLoading] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(true);
 
-  /**
-   * Guard: user tidak valid
-   */
   useEffect(() => {
     if (!buyerId) {
       toast.error("User tidak valid, silakan login ulang");
@@ -48,20 +45,13 @@ export default function EditReviewPage() {
     }
   }, [buyerId, router]);
 
-  /**
-   * Load data review sebelumnya
-   * (pakai GET property → cari reviewId)
-   */
   useEffect(() => {
     const loadReview = async () => {
-      try {
-        const propertyId = Number(localStorage.getItem("currentPropertyId"));
-        if (!propertyId) return;
+      if (!buyerId) return;
 
-        const res = await reviewService.getByProperty(propertyId);
-        const review = res.data.find(
-          (r) => r.reviewId === Number(reviewId)
-        );
+      try {
+        const res = await reviewService.getByBuyer(buyerId);
+        const review = res.data.find((r) => r.reviewId === Number(reviewId));
 
         if (!review) {
           toast.error("Review tidak ditemukan");
@@ -71,19 +61,18 @@ export default function EditReviewPage() {
 
         setRating(review.rating);
         setComment(review.comment);
-      } catch (err) {
+      } catch {
         toast.error("Gagal memuat data review");
+      } finally {
+        setInitialLoading(false);
       }
     };
 
     loadReview();
-  }, [reviewId, router]);
+  }, [buyerId, reviewId, router]);
 
-  /**
-   * UPDATE REVIEW
-   */
   const handleUpdate = async () => {
-    if (!buyerId) return;
+    if (!buyerId || rating === null) return;
 
     try {
       setLoading(true);
@@ -95,94 +84,115 @@ export default function EditReviewPage() {
 
       toast.success("Review berhasil diperbarui");
       router.back();
-    } catch (err: any) {
-      toast.error(err?.response?.data?.message || "Gagal memperbarui review");
+    } catch (err) {
+      if (err instanceof AxiosError) {
+        toast.error(err.response?.data?.message ?? "Gagal memperbarui review");
+      } else {
+        toast.error("Gagal memperbarui review");
+      }
     } finally {
       setLoading(false);
     }
   };
 
-  /**
-   * DELETE REVIEW
-   */
   const handleDelete = async () => {
     if (!buyerId) return;
 
     try {
       setLoading(true);
-
       await reviewService.delete(Number(reviewId), buyerId);
-
       toast.success("Review berhasil dihapus");
       router.push("/dashboard/buyer/review");
-    } catch (err: any) {
-      toast.error(err?.response?.data?.message || "Gagal menghapus review");
+    } catch (err) {
+      if (err instanceof AxiosError) {
+        toast.error(err.response?.data?.message ?? "Gagal menghapus review");
+      } else {
+        toast.error("Gagal menghapus review");
+      }
     } finally {
       setLoading(false);
     }
   };
 
+  if (initialLoading) {
+    return (
+      <p className="text-center py-20 text-gray-500">Memuat data ulasan...</p>
+    );
+  }
+
   return (
-    <main className="max-w-xl mx-auto px-4 py-10">
-      <h1 className="text-2xl font-bold mb-6">Edit Ulasan</h1>
+    <main className="max-w-xl mx-auto px-4 py-12">
+      <Card className="shadow-md">
+        <CardHeader>
+          <CardTitle className="text-2xl">Edit Ulasan</CardTitle>
+        </CardHeader>
 
-      <div className="space-y-5 bg-white p-6 rounded-xl border shadow-sm">
-        {/* Rating */}
-        <div>
-          <label className="text-sm font-medium">Rating (1 - 5)</label>
-          <input
-            type="number"
-            min={1}
-            max={5}
-            value={rating}
-            onChange={(e) => setRating(Number(e.target.value))}
-            className="mt-1 w-full border rounded-md px-3 py-2"
-          />
-        </div>
+        <CardContent className="space-y-6">
+          <div>
+            <label className="text-sm font-medium text-gray-700">
+              Rating (1 - 5)
+            </label>
+            <input
+              type="number"
+              min={1}
+              max={5}
+              value={rating ?? 1}
+              onChange={(e) => setRating(Number(e.target.value))}
+              className="mt-1 w-full rounded-md border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#39D177]"
+            />
+          </div>
 
-        {/* Comment */}
-        <div>
-          <label className="text-sm font-medium">Komentar</label>
-          <Textarea
-            value={comment}
-            onChange={(e) => setComment(e.target.value)}
-            placeholder="Tulis ulasan Anda..."
-          />
-        </div>
+          <div>
+            <label className="text-sm font-medium text-gray-700">
+              Komentar
+            </label>
+            <Textarea
+              value={comment}
+              onChange={(e) => setComment(e.target.value)}
+              className="mt-1 focus:ring-[#39D177]"
+            />
+          </div>
 
-        {/* Actions */}
-        <div className="flex justify-between items-center pt-4">
-          <Button onClick={handleUpdate} disabled={loading}>
-            Simpan Perubahan
-          </Button>
+          <div className="flex justify-between items-center pt-4">
+            <Button
+              onClick={handleUpdate}
+              disabled={loading}
+              className="bg-[#39D177] hover:bg-[#2FAE63]"
+            >
+              Simpan Perubahan
+            </Button>
 
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <Button variant="destructive" disabled={loading}>
-                Hapus Review
-              </Button>
-            </AlertDialogTrigger>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant="destructive" disabled={loading}>
+                  Hapus Review
+                </Button>
+              </AlertDialogTrigger>
 
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>
-                  Yakin ingin menghapus review?
-                </AlertDialogTitle>
-                <AlertDialogDescription>
-                  Tindakan ini tidak dapat dibatalkan.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>
+                    Yakin ingin menghapus review?
+                  </AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Tindakan ini tidak dapat dibatalkan.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
 
-              <AlertDialogFooter>
-                <AlertDialogCancel>Batal</AlertDialogCancel>
-                <AlertDialogAction onClick={handleDelete}>
-                  Ya, Hapus
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
-        </div>
-      </div>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Batal</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={handleDelete}
+                    className="bg-red-500 hover:bg-red-600"
+                  >
+                    Ya, Hapus
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </div>
+        </CardContent>
+      </Card>
     </main>
   );
 }

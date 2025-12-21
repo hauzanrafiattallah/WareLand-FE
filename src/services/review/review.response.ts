@@ -1,19 +1,19 @@
-export type Review = {
-  reviewId: number;
-  rating: number;
-  comment: string;
-  buyerName: string;
-  createdAt: string;
-};
+import { PublicReview, BuyerReview } from "./review.types";
 
-export type ReviewListResponse = {
+export type PublicReviewListResponse = {
   success: boolean;
   message: string | null;
-  data: Review[];
+  data: PublicReview[];
 };
 
-export type ReviewResponse = {
+export type BuyerReviewListResponse = {
   success: boolean;
   message: string | null;
-  data: Review;
+  data: BuyerReview[];
+};
+
+export type ReviewResponse<T> = {
+  success: boolean;
+  message: string | null;
+  data: T;
 };

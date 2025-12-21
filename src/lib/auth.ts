@@ -1,19 +1,38 @@
-export type AppUserRole = "BUYER" | "SELLER";
+// src/lib/auth.ts
 
-export function normalizeRole(role: unknown): AppUserRole | undefined {
-  if (!role) return;
+export type UserRole = "SELLER" | "BUYER" | "ADMIN";
 
-  const value = String(role).toLowerCase();
+/**
+ * Normalisasi role dari backend
+ * - PASTI return string (tidak pernah undefined)
+ * - Akan throw error jika role tidak valid
+ */
+export function normalizeRole(role: string): UserRole {
+  const normalized = role.toUpperCase();
 
-  if (value === "buyer" || value === "pembeli") return "BUYER";
-  if (value === "seller" || value === "penjual") return "SELLER";
+  if (
+    normalized !== "SELLER" &&
+    normalized !== "BUYER" &&
+    normalized !== "ADMIN"
+  ) {
+    throw new Error("Role tidak valid");
+  }
 
-  return;
+  return normalized;
 }
 
-export function getDashboardPathByRole(
-  role?: AppUserRole
-): string {
-  if (role === "SELLER") return "/dashboard/seller";
-  return "/dashboard/buyer";
+/**
+ * Mapping role ke dashboard path
+ */
+export function getDashboardPathByRole(role: UserRole): string {
+  switch (role) {
+    case "SELLER":
+      return "/dashboard/seller";
+    case "BUYER":
+      return "/dashboard/buyer";
+    case "ADMIN":
+      return "/dashboard/admin";
+    default:
+      return "/login";
+  }
 }
