@@ -1,22 +1,27 @@
-  import { axiosInstance } from "@/lib/axios";
-  import { UpdateUserPayload } from "./user.payload";
-  import { ApiResponse, UserProfile } from "./user.response";
+import { axiosInstance } from "@/lib/axios";
+import { UpdateUserPayload } from "./user.payload";
+import { ApiResponse, UserProfile } from "./user.response";
 
-  export const userService = {
-    getMe: async () => {
-      const { data } = await axiosInstance.get<
-        ApiResponse<UserProfile>
-      >("/api/auth/me");
-      return data;
-    },
+export const userService = {
+  getMe: async () => {
+    const { data } = await axiosInstance.get<ApiResponse<UserProfile>>(
+      "/api/auth/me"
+    );
+    return data;
+  },
 
-    updateProfile: async (
-      id: number,
-      payload: UpdateUserPayload
-    ) => {
-      const { data } = await axiosInstance.put<
-        ApiResponse<UserProfile>
-      >(`/api/users/${id}`, payload);
-      return data;
-    },
-  };
+  updateProfile: async (id: number, payload: UpdateUserPayload) => {
+    const { data } = await axiosInstance.put<ApiResponse<UserProfile>>(
+      `/api/users/${id}`,
+      payload
+    );
+    return data;
+  },
+
+  deleteAccount: async (id: number) => {
+    const { data } = await axiosInstance.delete<ApiResponse<null>>(
+      `/api/users/${id}`
+    );
+    return data;
+  },
+};

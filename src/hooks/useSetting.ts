@@ -32,7 +32,7 @@ export function useSetting(successMessage: string, errorMessage: string) {
       return;
     }
 
-    const parsedUser = JSON.parse(storedUser);
+    const parsedUser = JSON.parse(storedUser) as { id: number };
     setUserId(parsedUser.id);
     fetchProfile();
   }, [router]);
@@ -98,6 +98,29 @@ export function useSetting(successMessage: string, errorMessage: string) {
     }
   };
 
+  const deleteAccount = async () => {
+    if (!userId) return;
+    setIsLoading(true);
+
+    try {
+      await userService.deleteAccount(userId);
+
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("user");
+
+      toast.success("Akun berhasil dihapus");
+      router.replace("/login");
+    } catch (err) {
+      if (err instanceof AxiosError) {
+        toast.error(err.response?.data?.message || "Gagal menghapus akun");
+      } else {
+        toast.error("Terjadi kesalahan sistem");
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return {
     profile,
     setProfile,
@@ -105,6 +128,7 @@ export function useSetting(successMessage: string, errorMessage: string) {
     setEditMode,
     isLoading,
     saveProfile,
+    deleteAccount,
     showOldPassword,
     setShowOldPassword,
     showNewPassword,
