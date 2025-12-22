@@ -1,5 +1,16 @@
 "use client";
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { useSetting } from "@/hooks/useSetting";
 import { CheckCircle, Eye, EyeOff, Loader2 } from "lucide-react";
 import Image from "next/image";
@@ -12,6 +23,7 @@ export default function BuyerProfileSettings() {
     setEditMode,
     isLoading,
     saveProfile,
+    deleteAccount,
     showOldPassword,
     setShowOldPassword,
     showNewPassword,
@@ -54,7 +66,7 @@ export default function BuyerProfileSettings() {
 
         <button
           onClick={() => setEditMode(true)}
-          className="w-full sm:w-auto px-6 py-2 rounded-full bg-[#39D177] text-white hover:bg-[#2FAE63] transition"
+          className="w-full sm:w-auto px-6 py-2 cursor-pointer rounded-full bg-[#39D177] text-white hover:bg-[#2FAE63] transition"
         >
           Edit Profile
         </button>
@@ -179,7 +191,7 @@ export default function BuyerProfileSettings() {
             <button
               onClick={() => setEditMode(false)}
               disabled={isLoading}
-              className="w-full sm:w-auto px-6 py-3 sm:py-2 rounded-xl sm:rounded-full bg-gray-200 text-gray-800 hover:bg-gray-300 font-medium transition disabled:opacity-50"
+              className="w-full sm:w-auto px-6 py-3 sm:py-2 rounded-xl cursor-pointer sm:rounded-full bg-gray-200 text-gray-800 hover:bg-gray-300 font-medium transition disabled:opacity-50"
             >
               Cancel
             </button>
@@ -187,7 +199,7 @@ export default function BuyerProfileSettings() {
             <button
               onClick={saveProfile}
               disabled={isLoading}
-              className="w-full sm:w-auto px-8 py-3 sm:py-2 rounded-xl sm:rounded-full bg-[#39D177] text-white hover:bg-[#2FAE63] font-medium transition shadow-sm hover:shadow flex items-center justify-center gap-2 disabled:opacity-50"
+              className="w-full cursor-pointer sm:w-auto px-8 py-3 sm:py-2 rounded-xl sm:rounded-full bg-[#39D177] text-white hover:bg-[#2FAE63] font-medium transition shadow-sm hover:shadow flex items-center justify-center gap-2 disabled:opacity-50"
             >
               {isLoading ? (
                 <>
@@ -199,6 +211,59 @@ export default function BuyerProfileSettings() {
             </button>
           </div>
         )}
+      </div>
+
+      <div className="bg-red-50/40 mt-8 p-6 rounded-xl border border-red-200 shadow-sm">
+        <h3 className="text-lg font-semibold text-red-500 mb-2">Danger Zone</h3>
+
+        <p className="text-sm text-gray-600 mb-4">
+          Menghapus akun akan menghilangkan seluruh data dan tidak dapat
+          dibatalkan.
+        </p>
+
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <button className="px-6 py-3 cursor-pointer rounded-xl sm:rounded-full bg-red-500 text-white hover:bg-red-600 transition w-full sm:w-auto">
+              Delete Account
+            </button>
+          </AlertDialogTrigger>
+
+          <AlertDialogContent className="rounded-2xl">
+            <AlertDialogHeader>
+              <AlertDialogTitle className="text-red-500">
+                Hapus Akun Permanen?
+              </AlertDialogTitle>
+              <AlertDialogDescription className="text-gray-600">
+                Tindakan ini tidak dapat dibatalkan. Semua data akun, profil,
+                dan akses Anda akan dihapus secara permanen dari sistem.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+
+            <AlertDialogFooter className="flex flex-col-reverse sm:flex-row gap-3">
+              <AlertDialogCancel
+                className="rounded-full cursor-pointer"
+                disabled={isLoading}
+              >
+                Cancel
+              </AlertDialogCancel>
+
+              <AlertDialogAction
+                onClick={deleteAccount}
+                disabled={isLoading}
+                className="rounded-full cursor-pointer bg-red-500 hover:bg-red-600 text-white flex items-center justify-center gap-2"
+              >
+                {isLoading ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Deleting...
+                  </>
+                ) : (
+                  "Yes, Delete My Account"
+                )}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     </main>
   );
