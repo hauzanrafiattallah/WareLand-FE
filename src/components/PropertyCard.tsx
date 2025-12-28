@@ -14,7 +14,7 @@ type Property = {
 export default function PropertyCard({ property }: { property: Property }) {
   return (
     <Link
-      href={`/dashboard/properties/${property.id}`}
+      href={`/dashboard/buyer/properties/${property.id}`}
       className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200 block"
     >
       <div className="relative w-full h-48 rounded-t-xl overflow-hidden">
