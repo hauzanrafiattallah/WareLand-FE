@@ -1,6 +1,9 @@
 import { axiosInstance } from "@/lib/axios";
+import {
+  CreatePropertyPayload,
+  UpdatePropertyPayload,
+} from "./property.payload";
 import { ApiResponse, Property } from "./property.types";
-import { CreatePropertyPayload, UpdatePropertyPayload } from "./property.payload";
 
 const BASE_PATH = "/api/seller/properties";
 
@@ -11,6 +14,12 @@ export const PropertyService = {
 
   findAll(): Promise<ApiResponse<Property[]>> {
     return axiosInstance.get(BASE_PATH).then((res) => res.data);
+  },
+
+  getById(propertyId: number): Promise<ApiResponse<Property>> {
+    return axiosInstance
+      .get(`/api/catalog/properties/${propertyId}`)
+      .then((res) => res.data);
   },
 
   update(

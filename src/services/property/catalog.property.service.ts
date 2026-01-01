@@ -17,6 +17,7 @@ export type CatalogProperty = {
   address: string;
   price: number;
   description: string;
+  imageUrl?: string;
   seller?: Seller;
 };
 
