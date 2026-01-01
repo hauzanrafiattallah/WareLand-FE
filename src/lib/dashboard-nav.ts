@@ -15,10 +15,7 @@ export const dashboardNav = {
     title: "Seller Panel",
     subtitle: "Manage your business",
     items: [
-      { name: "Dashboard", href: "/dashboard/seller", icon: LayoutDashboard },
       { name: "My Listings", href: "/dashboard/seller/listings", icon: Home },
-      { name: "Orders", href: "/dashboard/seller/orders", icon: ShoppingCart },
-      { name: "Chat", href: "/dashboard/seller/chat", icon: MessageSquare },
       { name: "Settings", href: "/dashboard/seller/settings", icon: Settings },
     ],
   },
