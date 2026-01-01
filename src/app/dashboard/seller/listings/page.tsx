@@ -179,7 +179,7 @@ export default function ManageListingsPage() {
                 {/* IMAGE */}
                 <div className="relative w-full h-48 bg-gray-100">
                   <Image
-                    src="/home.png"
+                    src={item.imageUrl || "/home.png"}
                     alt={item.address}
                     fill
                     className="object-cover group-hover:scale-105 transition-transform duration-300"
