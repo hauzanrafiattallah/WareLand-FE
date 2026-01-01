@@ -39,7 +39,7 @@ export default function CatalogPropertyCard({
     >
       <div className="relative w-full h-48 rounded-t-xl overflow-hidden bg-gray-100">
         <Image
-          src="/home.png"
+          src={property.imageUrl || "/home.png"}
           alt={property.address}
           fill
           priority
