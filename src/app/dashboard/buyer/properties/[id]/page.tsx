@@ -2,7 +2,7 @@
 
 import PropertyReviewSection from "@/components/review/PropertyReviewSection";
 import { Button } from "@/components/ui/button";
-import { CatalogPropertyService } from "@/services/property/catalog.property.service";
+import { CatalogPropertyService, CatalogProperty } from "@/services/property/catalog.property.service";
 import { useWishlist } from "@/hooks/property/useWishlist";
 import {
   ArrowLeft,
@@ -18,14 +18,7 @@ import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-
-// TYPES
-type PropertyDetail = {
-  propertyId: number;
-  address: string;
-  price: number;
-  description: string;
-};
+import { MessageCircle } from "lucide-react";
 
 export default function PropertyDetailPage() {
   const params = useParams();
@@ -33,7 +26,7 @@ export default function PropertyDetailPage() {
 
   const propertyId = Number(params.id);
 
-  const [property, setProperty] = useState<PropertyDetail | null>(null);
+  const [property, setProperty] = useState<CatalogProperty | null>(null);
   const [loading, setLoading] = useState(true);
 
   const { isInWishlist, toggleWishlist } = useWishlist();
@@ -209,18 +202,46 @@ export default function PropertyDetailPage() {
 
             <div className="flex items-center gap-3 mb-4 pb-4 border-b border-gray-100">
               <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#39D177] to-[#2FAE63] flex items-center justify-center">
-                <span className="text-white font-semibold text-lg">S</span>
+                <span className="text-white font-semibold text-lg">
+                  {property.seller?.name?.charAt(0)?.toUpperCase() || "S"}
+                </span>
               </div>
               <div>
-                <p className="font-semibold text-gray-900">Seller</p>
-                <p className="text-sm text-gray-500">Agen Properti</p>
+                <p className="font-semibold text-gray-900">
+                  {property.seller?.name || "Penjual"}
+                </p>
+                <p className="text-sm text-gray-500">
+                  {property.seller?.phoneNumber ? (
+                    <span className="flex items-center gap-1">
+                      <Phone className="w-3 h-3" />
+                      {property.seller.phoneNumber.startsWith("0")
+                        ? `+62 ${property.seller.phoneNumber.slice(1)}`
+                        : property.seller.phoneNumber}
+                    </span>
+                  ) : (
+                    "Agen Properti"
+                  )}
+                </p>
               </div>
             </div>
 
-            <Button className="w-full bg-[#39D177] hover:bg-[#2FAE63] text-white rounded-full py-3 font-medium transition-all">
-              <Phone className="w-4 h-4 mr-2" />
-              Hubungi Penjual
-            </Button>
+            <a
+              href={`https://wa.me/${property.seller?.phoneNumber?.replace(/\D/g, "")?.replace(/^0/, "62")}?text=${encodeURIComponent(
+                `Halo ${property.seller?.name || "Penjual"},\n\n` +
+                  `Saya tertarik dengan properti:\n` +
+                  `📍 ${property.address}\n` +
+                  `💰 Rp ${property.price.toLocaleString("id-ID")}\n\n` +
+                  `Apakah properti ini masih tersedia?`
+              )}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full"
+            >
+              <Button className="w-full bg-gradient-to-r from-[#25D366] to-[#128C7E] hover:opacity-90 text-white rounded-full py-3 font-medium transition-all">
+                <MessageCircle className="w-4 h-4 mr-2" />
+                Chat via WhatsApp
+              </Button>
+            </a>
 
             <Button
               variant="outline"

@@ -1,11 +1,23 @@
 import { axiosInstance } from "@/lib/axios";
 
 // TYPES
+export type Seller = {
+  userId: number;
+  username: string;
+  name: string;
+  email: string;
+  phoneNumber: string;
+  userRole: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
 export type CatalogProperty = {
   propertyId: number;
   address: string;
   price: number;
   description: string;
+  seller?: Seller;
 };
 
 export type ApiResponse<T> = {
