@@ -110,7 +110,7 @@ export default function BuyerProfileSettings() {
             />
           </div>
 
-          <div className="md:col-span-2">
+          <div>
             <label className="text-sm text-gray-700">Phone Number</label>
             <input
               type="text"
@@ -119,11 +119,26 @@ export default function BuyerProfileSettings() {
               onChange={(e) =>
                 setProfile({ ...profile, phone: e.target.value })
               }
+              placeholder="08xxxxxxxxxx"
               className={`w-full mt-2 px-4 py-3 rounded-xl border ${
                 editMode
                   ? "border-[#39D177]/40 focus:border-[#39D177] outline-none"
                   : "bg-gray-100 text-gray-500 border-gray-300"
               }`}
+            />
+          </div>
+
+          <div>
+            <label className="text-sm text-gray-700">Username</label>
+            <input
+              type="text"
+              disabled
+              value={
+                typeof window !== "undefined"
+                  ? JSON.parse(localStorage.getItem("user") || "{}")?.username || "-"
+                  : "-"
+              }
+              className="w-full mt-2 px-4 py-3 rounded-xl border bg-gray-100 text-gray-500 border-gray-300"
             />
           </div>
 
