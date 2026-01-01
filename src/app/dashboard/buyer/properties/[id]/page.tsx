@@ -1,245 +1,275 @@
-import Image from "next/image";
-import Link from "next/link";
-import { notFound } from "next/navigation";
+"use client";
+
+import PropertyReviewSection from "@/components/review/PropertyReviewSection";
+import { Button } from "@/components/ui/button";
+import { CatalogPropertyService, CatalogProperty } from "@/services/property/catalog.property.service";
+import { useWishlist } from "@/hooks/property/useWishlist";
 import {
+  ArrowLeft,
+  Building,
+  Heart,
+  Loader2,
   MapPin,
-  BedDouble,
-  Bath,
-  Maximize,
-  ShieldCheck,
-  User,
   Phone,
   Share2,
-  Heart,
+  ShieldCheck,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
+import Image from "next/image";
+import { useParams, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
+import { MessageCircle } from "lucide-react";
 
-// 1. Tipe data yang lebih detail untuk halaman detail
-type PropertyDetail = {
-  id: number;
-  title: string;
-  price: string;
-  location: string;
-  address: string;
-  seller: {
-    name: string;
-    role: string;
-    image: string;
-    joined: string;
-  };
-  images: string[];
-  specs: {
-    beds: number;
-    baths: number;
-    landArea: number; // m2
-    buildingArea: number; // m2
-    floors: number;
-    certificate: string;
-  };
-  description: string;
-  facilities: string[];
-  badge?: string;
-};
+export default function PropertyDetailPage() {
+  const params = useParams();
+  const router = useRouter();
 
-// 2. Mock Data Generator (Simulasi Database)
-async function getPropertyDetail(id: string): Promise<PropertyDetail | null> {
-  // Simulasi delay network
-  await new Promise((resolve) => setTimeout(resolve, 500));
+  const propertyId = Number(params.id);
 
-  // Data dummy yang diperluas
-  const dummyData: PropertyDetail = {
-    id: parseInt(id),
-    title: id === "1" ? "Rumah Modern Minimalis" : "Villa Pemandangan Gunung",
-    price: id === "1" ? "750.000.000" : "1.200.000.000",
-    location: id === "1" ? "Bandung" : "Lembang",
-    address:
-      id === "1"
-        ? "Jl. Sukajadi No. 123, Sukasari, Kota Bandung"
-        : "Jl. Kolonel Masturi No. 88, Lembang, Bandung Barat",
-    seller: {
-      name: id === "1" ? "Andi Setiawan" : "Sari Puspita",
-      role: "Agen Properti Terverifikasi",
-      image: "/profile.png", // Menggunakan placeholder yang ada
-      joined: "Januari 2023",
-    },
-    images: ["/home.png", "/home.png", "/home.png"], // Simulasi galeri
-    specs: {
-      beds: id === "1" ? 3 : 4,
-      baths: id === "1" ? 2 : 3,
-      landArea: id === "1" ? 120 : 300,
-      buildingArea: id === "1" ? 90 : 200,
-      floors: id === "1" ? 1 : 2,
-      certificate: "SHM - Sertifikat Hak Milik",
-    },
-    description:
-      "Hunian asri dan nyaman dengan desain modern minimalis yang sangat cocok untuk keluarga muda. Terletak di kawasan strategis yang bebas banjir, dekat dengan pusat perbelanjaan, sekolah, dan akses tol. Lingkungan aman dengan sistem keamanan 24 jam (One Gate System). \n\nBangunan menggunakan material berkualitas tinggi, lantai granit, dan kusen aluminium. Halaman belakang luas, bisa digunakan untuk taman atau pengembangan masa depan.",
-    facilities: [
-      "Keamanan 24 Jam",
-      "Taman Bermain",
-      "Carport",
-      "Akses Internet",
-      "Dekat Sekolah",
-      "Bebas Banjir",
-    ],
-    badge: id === "1" ? "New" : "Premium",
-  };
+  const [property, setProperty] = useState<CatalogProperty | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  return dummyData;
-}
+  const { isInWishlist, toggleWishlist } = useWishlist();
 
-type Props = {
-  params: Promise<{ id: string }>;
-};
+  // FETCH PROPERTY DETAIL
+  useEffect(() => {
+    if (isNaN(propertyId)) {
+      toast.error("ID properti tidak valid");
+      setLoading(false);
+      return;
+    }
 
-export default async function PropertyDetailPage({ params }: Props) {
-  const { id } = await params;
-  const property = await getPropertyDetail(id);
+    const fetchProperty = async () => {
+      try {
+        const res = await CatalogPropertyService.getById(propertyId);
 
-  if (!property) {
-    return notFound();
+        //  GUARD RESPONSE
+        if (!res.success || !res.data) {
+          setProperty(null);
+          return;
+        }
+
+        setProperty(res.data);
+      } catch (err) {
+        toast.error("Gagal memuat detail properti");
+        setProperty(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProperty();
+  }, [propertyId]);
+
+  // LOADING STATE
+  if (loading) {
+    return (
+      <div className="min-h-[60vh] flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="w-10 h-10 text-[#39D177] animate-spin mx-auto mb-4" />
+          <p className="text-gray-500">Memuat detail properti...</p>
+        </div>
+      </div>
+    );
   }
 
+  // NOT FOUND STATE
+  if (!property) {
+    return (
+      <div className="min-h-[60vh] flex items-center justify-center">
+        <div className="text-center">
+          <Building className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+          <h2 className="text-xl font-semibold text-gray-700 mb-2">
+            Properti tidak ditemukan
+          </h2>
+          <p className="text-gray-500 mb-4">
+            Properti yang Anda cari mungkin sudah tidak tersedia
+          </p>
+          <Button
+            onClick={() => router.push("/dashboard/buyer")}
+            className="bg-[#39D177] hover:bg-[#2FAE63] text-white rounded-full"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Kembali ke Beranda
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  // Extract location from address
+  const location = property.address.split(",")[0] || property.address;
+
+  // RENDER
   return (
-    <main className="min-h-screen bg-gray-50 pb-20">
-      {/* HEADER IMAGE SECTION */}
-      <div className="relative w-full h-[400px] md:h-[500px] bg-gray-200">
-        <Image
-          src={property.images[0]}
-          alt={property.title}
-          fill
-          className="object-cover"
-          priority
-        />
-        <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-black/30 via-transparent to-black/60 pointer-events-none" />
-        
-        {/* Top Action Buttons */}
-        <div className="absolute top-6 right-6 flex gap-3 z-10">
-            <Button variant="secondary" size="icon" className="rounded-full bg-white/90 hover:bg-white">
-                <Share2 className="w-5 h-5 text-gray-700" />
-            </Button>
-            <Button variant="secondary" size="icon" className="rounded-full bg-white/90 hover:bg-white">
-                <Heart className="w-5 h-5 text-gray-700" />
-            </Button>
+    <main className="w-full max-w-full px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
+      {/* BACK BUTTON */}
+      <button
+        onClick={() => router.back()}
+        className="flex items-center gap-2 text-gray-600 hover:text-[#39D177] transition mb-4 sm:mb-6"
+      >
+        <ArrowLeft className="w-5 h-5" />
+        <span className="text-sm sm:text-base">Kembali</span>
+      </button>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
+        {/* LEFT SECTION - PROPERTY DETAILS */}
+        <div className="lg:col-span-2 space-y-6">
+          {/* PROPERTY IMAGE */}
+          <div className="relative w-full h-[200px] sm:h-[300px] lg:h-[400px] rounded-2xl overflow-hidden bg-gray-100">
+            <Image
+              src="/home.png"
+              alt={property.address}
+              fill
+              priority
+              className="object-cover"
+            />
+
+            {/* ACTION BUTTONS */}
+            <div className="absolute top-4 right-4 flex gap-2">
+              <button
+                onClick={() => property && toggleWishlist(property)}
+                className={`w-10 h-10 rounded-full flex items-center justify-center transition ${
+                  isInWishlist(property.propertyId)
+                    ? "bg-red-500 text-white"
+                    : "bg-white/90 text-gray-700 hover:bg-white hover:text-red-500"
+                } shadow-lg`}
+              >
+                <Heart
+                  className={`w-5 h-5 ${isInWishlist(property.propertyId) ? "fill-white" : ""}`}
+                />
+              </button>
+              <button className="w-10 h-10 rounded-full bg-white/90 text-gray-700 hover:bg-white flex items-center justify-center shadow-lg transition">
+                <Share2 className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* BADGE */}
+            <div className="absolute top-4 left-4">
+              <span className="bg-[#39D177] text-white text-xs sm:text-sm px-3 py-1.5 rounded-full font-medium shadow-lg">
+                Tersedia
+              </span>
+            </div>
+          </div>
+
+          {/* PROPERTY INFO CARD */}
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 sm:p-6">
+            {/* TITLE & LOCATION */}
+            <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-2">
+              {property.description || `Properti #${property.propertyId}`}
+            </h1>
+
+            <div className="flex items-center gap-2 text-gray-500 mb-4">
+              <MapPin className="w-4 h-4 sm:w-5 sm:h-5 text-[#39D177]" />
+              <span className="text-sm sm:text-base">{property.address}</span>
+            </div>
+
+            {/* PRICE */}
+            <div className="bg-gradient-to-r from-[#39D177]/10 to-[#39D177]/5 rounded-xl p-4 mb-6">
+              <p className="text-sm text-gray-600 mb-1">Harga</p>
+              <p className="text-2xl sm:text-3xl font-bold text-[#39D177]">
+                Rp {property.price.toLocaleString("id-ID")}
+              </p>
+            </div>
+
+            {/* DESCRIPTION */}
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                Deskripsi
+              </h3>
+              <p className="text-gray-600 leading-relaxed">
+                {property.description || "Tidak ada deskripsi tersedia."}
+              </p>
+            </div>
+          </div>
+
+          {/* REVIEW SECTION - WITH CREATE CAPABILITY */}
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 sm:p-6">
+            <PropertyReviewSection
+              propertyId={property.propertyId}
+              readOnly={false}
+            />
+          </div>
         </div>
 
-        <div className="absolute bottom-0 left-0 w-full p-6 md:p-10 text-white">
-          <div className="max-w-7xl mx-auto">
-            {property.badge && (
-              <span className="px-3 py-1 bg-[#39D177] text-white text-xs font-bold uppercase tracking-wider rounded-full mb-3 inline-block">
-                {property.badge}
-              </span>
-            )}
-            <h1 className="text-3xl md:text-4xl font-bold mb-2">{property.title}</h1>
-            <div className="flex items-center gap-2 text-gray-200">
-              <MapPin className="w-4 h-4" />
-              <span>{property.address}</span>
+        {/* RIGHT SECTION - SIDEBAR */}
+        <div className="space-y-4 sm:space-y-6">
+          {/* CONTACT SELLER CARD */}
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 sm:p-6 sticky top-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">
+              Hubungi Penjual
+            </h3>
+
+            <div className="flex items-center gap-3 mb-4 pb-4 border-b border-gray-100">
+              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#39D177] to-[#2FAE63] flex items-center justify-center">
+                <span className="text-white font-semibold text-lg">
+                  {property.seller?.name?.charAt(0)?.toUpperCase() || "S"}
+                </span>
+              </div>
+              <div>
+                <p className="font-semibold text-gray-900">
+                  {property.seller?.name || "Penjual"}
+                </p>
+                <p className="text-sm text-gray-500">
+                  {property.seller?.phoneNumber ? (
+                    <span className="flex items-center gap-1">
+                      <Phone className="w-3 h-3" />
+                      {property.seller.phoneNumber.startsWith("0")
+                        ? `+62 ${property.seller.phoneNumber.slice(1)}`
+                        : property.seller.phoneNumber}
+                    </span>
+                  ) : (
+                    "Agen Properti"
+                  )}
+                </p>
+              </div>
+            </div>
+
+            <a
+              href={`https://wa.me/${property.seller?.phoneNumber?.replace(/\D/g, "")?.replace(/^0/, "62")}?text=${encodeURIComponent(
+                `Halo ${property.seller?.name || "Penjual"},\n\n` +
+                  `Saya tertarik dengan properti:\n` +
+                  `📍 ${property.address}\n` +
+                  `💰 Rp ${property.price.toLocaleString("id-ID")}\n\n` +
+                  `Apakah properti ini masih tersedia?`
+              )}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full"
+            >
+              <Button className="w-full bg-gradient-to-r from-[#25D366] to-[#128C7E] hover:opacity-90 text-white rounded-full py-3 font-medium transition-all">
+                <MessageCircle className="w-4 h-4 mr-2" />
+                Chat via WhatsApp
+              </Button>
+            </a>
+
+            <Button
+              variant="outline"
+              onClick={() => property && toggleWishlist(property)}
+              className={`w-full mt-3 rounded-full py-3 transition-all ${
+                isInWishlist(property.propertyId)
+                  ? "border-red-300 text-red-500 bg-red-50 hover:bg-red-100"
+                  : "border-[#39D177] text-[#39D177] hover:bg-[#39D177]/5"
+              }`}
+            >
+              <Heart className={`w-4 h-4 mr-2 ${isInWishlist(property.propertyId) ? "fill-red-500" : ""}`} />
+              {isInWishlist(property.propertyId) ? "Hapus dari Wishlist" : "Tambah ke Wishlist"}
+            </Button>
+          </div>
+
+          {/* SECURITY BADGE */}
+          <div className="bg-gradient-to-br from-blue-50 to-blue-100/50 rounded-2xl p-4 flex gap-3 items-start">
+            <ShieldCheck className="w-6 h-6 text-blue-600 flex-shrink-0 mt-0.5" />
+            <div>
+              <p className="font-medium text-blue-800 text-sm">
+                Transaksi Aman
+              </p>
+              <p className="text-xs text-blue-600 mt-1">
+                Transaksi dilindungi oleh sistem keamanan WareLand
+              </p>
             </div>
           </div>
         </div>
-      </div>
-
-      <div className="max-w-7xl mx-auto px-6 -mt-8 relative z-20 grid grid-cols-1 lg:grid-cols-3 gap-8">
-        
-        {/* LEFT CONTENT - MAIN INFO */}
-        <div className="lg:col-span-2 space-y-8">
-          
-          {/* Main Stats Card */}
-          <Card className="shadow-lg border-none">
-            <CardContent className="p-6 md:p-8">
-              <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
-                <div>
-                    <p className="text-sm text-gray-500 mb-1">Harga Penawaran</p>
-                    <h2 className="text-3xl font-bold text-[#39D177]">Rp {property.price}</h2>
-                </div>
-                <div className="flex gap-6 text-center">
-                    <div>
-                        <div className="flex items-center justify-center gap-1 text-gray-900 font-bold text-lg">
-                            <BedDouble className="w-5 h-5" /> {property.specs.beds}
-                        </div>
-                        <p className="text-xs text-gray-500 mt-1">Kamar Tidur</p>
-                    </div>
-                    <div>
-                        <div className="flex items-center justify-center gap-1 text-gray-900 font-bold text-lg">
-                            <Bath className="w-5 h-5" /> {property.specs.baths}
-                        </div>
-                        <p className="text-xs text-gray-500 mt-1">Kamar Mandi</p>
-                    </div>
-                    <div>
-                        <div className="flex items-center justify-center gap-1 text-gray-900 font-bold text-lg">
-                            <Maximize className="w-5 h-5" /> {property.specs.buildingArea}m²
-                        </div>
-                        <p className="text-xs text-gray-500 mt-1">Luas Bangunan</p>
-                    </div>
-                </div>
-              </div>
-
-              <Separator className="my-6" />
-
-              <h3 className="text-lg font-semibold mb-4">Deskripsi Properti</h3>
-              <p className="text-gray-600 leading-relaxed whitespace-pre-line">
-                {property.description}
-              </p>
-
-              <div className="mt-8">
-                <h3 className="text-lg font-semibold mb-4">Fasilitas & Spesifikasi</h3>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                    {property.facilities.map((item, i) => (
-                        <div key={i} className="flex items-center gap-2 text-gray-600">
-                            <div className="w-2 h-2 bg-[#39D177] rounded-full" />
-                            <span className="text-sm">{item}</span>
-                        </div>
-                    ))}
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* RIGHT SIDEBAR - SELLER & ACTION */}
-        <div className="lg:col-span-1 space-y-6">
-            
-            {/* Seller Card */}
-            <Card className="shadow-md border-gray-100">
-                <CardContent className="p-6">
-                    <div className="flex items-center gap-4 mb-6">
-                        <div className="relative w-14 h-14 rounded-full overflow-hidden border border-gray-200">
-                            {/* Placeholder image, replace with actual if available */}
-                            <div className="w-full h-full bg-gray-200 flex items-center justify-center text-gray-400">
-                                <User className="w-8 h-8" />
-                            </div>
-                        </div>
-                        <div>
-                            <h4 className="font-bold text-gray-900">{property.seller.name}</h4>
-                            <p className="text-xs text-gray-500">{property.seller.role}</p>
-                        </div>
-                    </div>
-                    
-                    <div className="space-y-3">
-                        <Button className="w-full bg-[#39D177] hover:bg-[#2FAE63] text-white rounded-full h-12 text-base font-medium">
-                            <Phone className="w-4 h-4 mr-2" /> Hubungi Penjual
-                        </Button>
-                        <Button variant="outline" className="w-full rounded-full h-12 text-base font-medium border-gray-300 text-gray-700 hover:bg-gray-50">
-                            Jadwalkan Survey
-                        </Button>
-                    </div>
-                </CardContent>
-            </Card>
-
-            {/* Security Badge */}
-            <div className="bg-blue-50 border border-blue-100 rounded-xl p-4 flex gap-3 items-start">
-                <ShieldCheck className="w-6 h-6 text-blue-600 shrink-0 mt-1" />
-                <div>
-                    <h5 className="font-semibold text-blue-900 text-sm">Transaksi Terlindungi</h5>
-                    <p className="text-blue-700 text-xs mt-1 leading-relaxed">
-                        Dokumen properti ini telah diverifikasi oleh sistem AI WareLand. Transaksi aman dengan Smart Contract.
-                    </p>
-                </div>
-            </div>
-
-        </div>
-
       </div>
     </main>
   );
