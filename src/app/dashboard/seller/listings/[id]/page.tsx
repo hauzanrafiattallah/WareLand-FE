@@ -215,9 +215,10 @@ export default function SellerPropertyDetailPage() {
               Aksi Seller
             </h3>
 
-            <div className="space-y-3">
+            <div className="space-y-2">
               <Link
                 href={`/dashboard/seller/listings/edit/${property.propertyId}`}
+                className="block w-full"
               >
                 <Button className="w-full bg-[#39D177] hover:bg-[#2FAE63] text-white rounded-full py-3 font-medium transition-all">
                   <Edit className="w-4 h-4 mr-2" />
