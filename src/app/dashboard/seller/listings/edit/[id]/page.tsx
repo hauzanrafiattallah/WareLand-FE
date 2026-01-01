@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useRouter, useParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
@@ -29,9 +29,13 @@ import { uploadToCloudinary } from "@/lib/cloudinary";
 import Image from "next/image";
 import Link from "next/link";
 
-export default function AddPropertyPage() {
+export default function EditPropertyPage() {
   const router = useRouter();
+  const params = useParams();
+  const propertyId = Number(params.id);
+
   const [isLoading, setIsLoading] = useState(false);
+  const [isFetching, setIsFetching] = useState(true);
   const [isUploading, setIsUploading] = useState(false);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -42,19 +46,48 @@ export default function AddPropertyPage() {
     handleSubmit,
     setValue,
     watch,
-    formState: { errors, isValid, dirtyFields },
+    reset,
+    formState: { errors, isValid },
   } = useForm<CreatePropertyInput>({
     resolver: zodResolver(createPropertySchema),
     mode: "onChange",
-    defaultValues: {
-      address: "",
-      price: undefined,
-      description: "",
-      imageUrl: "",
-    },
   });
 
-  // Calculate form progress
+  // Fetch Existing Data
+  useEffect(() => {
+    if (!propertyId) return;
+    const fetchData = async () => {
+      try {
+        const res = await PropertyService.getById(propertyId);
+        if (res.success && res.data) {
+          const { address, price, description, imageUrl } = res.data;
+          
+          reset({
+            address,
+            price,
+            description,
+            imageUrl: imageUrl || "",
+          });
+
+          if (imageUrl) {
+            setImagePreview(imageUrl);
+          }
+        } else {
+            toast.error("Properti tidak ditemukan");
+            router.push("/dashboard/seller/listings");
+        }
+      } catch (error) {
+        console.error(error);
+        toast.error("Gagal memuat data properti");
+        router.push("/dashboard/seller/listings");
+      } finally {
+        setIsFetching(false);
+      }
+    };
+    fetchData();
+  }, [propertyId, reset, router]);
+
+  // Use existing "New Property" logic for form handling...
   const watchedFields = watch();
   const fieldCount = 4;
   const filledFields = [
@@ -113,30 +146,42 @@ export default function AddPropertyPage() {
   const onSubmit = async (data: CreatePropertyInput) => {
     setIsLoading(true);
     try {
-      let imageUrl = "";
+      let imageUrl = data.imageUrl; // Keep existing URL by default
+
       if (imageFile) {
         setIsUploading(true);
         imageUrl = await uploadToCloudinary(imageFile);
         setIsUploading(false);
       }
 
-      await PropertyService.create({
+      await PropertyService.update(propertyId, {
         address: data.address,
         price: data.price,
         description: data.description,
         imageUrl: imageUrl,
       });
 
-      toast.success("Properti berhasil dipublikasikan!");
+      toast.success("Properti berhasil diperbarui!");
       router.push("/dashboard/seller/listings");
     } catch (error) {
       console.error(error);
-      toast.error("Gagal mempublikasikan properti");
+      toast.error("Gagal memperbarui properti");
     } finally {
       setIsLoading(false);
       setIsUploading(false);
     }
   };
+
+  if (isFetching) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+            <Loader2 className="w-10 h-10 text-[#39D177] animate-spin mx-auto mb-4" />
+            <p className="text-gray-500">Memuat data properti...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-[#39D177]/5">
@@ -153,14 +198,14 @@ export default function AddPropertyPage() {
 
           <div className="flex items-center gap-4">
             <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#39D177] to-[#2FAE63] flex items-center justify-center shadow-lg shadow-[#39D177]/30">
-              <Home className="w-7 h-7 text-white" />
+              <EditIcon className="w-7 h-7 text-white" />
             </div>
             <div>
               <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
-                Tambah Properti Baru
+                Edit Properti
               </h1>
               <p className="text-gray-600 mt-1">
-                Lengkapi informasi untuk mempublikasikan properti Anda
+                Perbarui informasi properti Anda
               </p>
             </div>
           </div>
@@ -181,29 +226,6 @@ export default function AddPropertyPage() {
                 style={{ width: `${progress}%` }}
               />
             </div>
-            <div className="flex justify-between mt-3">
-              {["Alamat", "Harga", "Deskripsi", "Gambar"].map((label, idx) => (
-                <div key={label} className="flex items-center gap-1.5">
-                  <div
-                    className={`w-5 h-5 rounded-full flex items-center justify-center transition-all ${
-                      [
-                        watchedFields.address?.length >= 10,
-                        watchedFields.price && watchedFields.price > 0,
-                        watchedFields.description?.length >= 10,
-                        !!imagePreview,
-                      ][idx]
-                        ? "bg-[#39D177] text-white"
-                        : "bg-gray-200 text-gray-400"
-                    }`}
-                  >
-                    <CheckCircle2 className="w-3 h-3" />
-                  </div>
-                  <span className="text-xs text-gray-500 hidden sm:inline">
-                    {label}
-                  </span>
-                </div>
-              ))}
-            </div>
           </div>
         </div>
 
@@ -221,9 +243,6 @@ export default function AddPropertyPage() {
                     <h3 className="font-semibold text-gray-900">
                       Lokasi Properti
                     </h3>
-                    <p className="text-sm text-gray-500">
-                      Alamat lengkap properti Anda
-                    </p>
                   </div>
                 </div>
                 <div className="space-y-2">
@@ -255,9 +274,6 @@ export default function AddPropertyPage() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-gray-900">Harga</h3>
-                    <p className="text-sm text-gray-500">
-                      Tentukan harga jual properti
-                    </p>
                   </div>
                 </div>
                 <div className="space-y-2">
@@ -284,11 +300,6 @@ export default function AddPropertyPage() {
                       {errors.price.message}
                     </p>
                   )}
-                  {watchedFields.price && watchedFields.price > 0 && (
-                    <p className="text-sm text-[#39D177] font-medium">
-                      Rp {watchedFields.price.toLocaleString("id-ID")}
-                    </p>
-                  )}
                 </div>
               </div>
 
@@ -300,9 +311,6 @@ export default function AddPropertyPage() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-gray-900">Deskripsi</h3>
-                    <p className="text-sm text-gray-500">
-                      Jelaskan detail properti Anda
-                    </p>
                   </div>
                 </div>
                 <div className="space-y-2">
@@ -313,26 +321,16 @@ export default function AddPropertyPage() {
                     id="description"
                     {...register("description")}
                     rows={5}
-                    placeholder="Contoh: Rumah minimalis 2 lantai dengan 3 kamar tidur, 2 kamar mandi, carport untuk 2 mobil, taman depan dan belakang. Lokasi strategis dekat pusat perbelanjaan dan akses tol."
+                    placeholder="Deskripsi properti..."
                     className={`w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-[#39D177] focus:ring-2 focus:ring-[#39D177]/20 transition-all resize-none text-gray-900 placeholder:text-gray-400 ${
                       errors.description
                         ? "border-red-300 focus:border-red-500"
                         : ""
                     }`}
                   />
-                  <div className="flex justify-between items-center">
-                    {errors.description ? (
-                      <p className="text-sm text-red-500 flex items-center gap-1">
-                        <span className="inline-block w-1 h-1 rounded-full bg-red-500" />
-                        {errors.description.message}
-                      </p>
-                    ) : (
-                      <span />
-                    )}
-                    <span className="text-xs text-gray-400">
-                      {watchedFields.description?.length || 0}/1000
-                    </span>
-                  </div>
+                  {errors.description && (
+                    <p className="text-sm text-red-500">{errors.description.message}</p>
+                  )}
                 </div>
               </div>
             </div>
@@ -349,9 +347,6 @@ export default function AddPropertyPage() {
                     <h3 className="font-semibold text-gray-900">
                       Foto Properti
                     </h3>
-                    <p className="text-sm text-gray-500">
-                      Upload foto terbaik
-                    </p>
                   </div>
                 </div>
 
@@ -372,25 +367,8 @@ export default function AddPropertyPage() {
                       className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                       onChange={handleImageSelect}
                     />
-                    <div
-                      className={`w-16 h-16 rounded-2xl flex items-center justify-center mb-3 transition-all ${
-                        isDragOver
-                          ? "bg-[#39D177] text-white scale-110"
-                          : "bg-gray-100"
-                      }`}
-                    >
-                      <UploadCloud
-                        className={`w-8 h-8 ${
-                          isDragOver ? "animate-bounce" : ""
-                        }`}
-                      />
-                    </div>
-                    <span className="text-sm font-medium text-gray-600">
-                      {isDragOver ? "Lepaskan untuk upload" : "Drag & drop atau klik"}
-                    </span>
-                    <span className="text-xs text-gray-400 mt-1">
-                      PNG, JPG, WEBP (Maks. 5MB)
-                    </span>
+                    <UploadCloud className="w-8 h-8 mb-2" />
+                    <span className="text-sm font-medium">Upload Gambar</span>
                   </div>
                 ) : (
                   <div className="relative h-56 rounded-2xl overflow-hidden border border-gray-100 group">
@@ -400,7 +378,6 @@ export default function AddPropertyPage() {
                       fill
                       className="object-cover"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                     <button
                       type="button"
                       onClick={handleRemoveImage}
@@ -408,9 +385,10 @@ export default function AddPropertyPage() {
                     >
                       <X className="w-4 h-4" />
                     </button>
+                    {/* If new file selected show name, else show 'Current Image' */}
                     <div className="absolute bottom-3 left-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <p className="text-white text-sm font-medium truncate">
-                        {imageFile?.name}
+                      <p className="text-white text-sm font-medium truncate drop-shadow-md">
+                        {imageFile ? imageFile.name : (imagePreview.startsWith('http') ? 'Gambar Saat Ini' : 'Preview')}
                       </p>
                     </div>
                   </div>
@@ -419,32 +397,20 @@ export default function AddPropertyPage() {
 
               {/* Submit Buttons */}
               <div className="bg-gradient-to-br from-[#39D177]/10 to-[#39D177]/5 rounded-2xl p-6 border border-[#39D177]/20 space-y-4">
-                <div className="text-center mb-2">
-                  <p className="text-sm text-gray-600">
-                    {isValid && imagePreview
-                      ? "✨ Form sudah lengkap!"
-                      : "Lengkapi semua field untuk publish"}
-                  </p>
-                </div>
-
                 <Button
                   type="submit"
-                  disabled={isLoading || !isValid}
-                  className="w-full h-14 bg-gradient-to-r from-[#39D177] to-[#2FAE63] hover:from-[#2FAE63] hover:to-[#259953] text-white rounded-2xl text-base font-semibold shadow-lg shadow-[#39D177]/30 hover:shadow-xl hover:shadow-[#39D177]/40 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none"
+                  disabled={isLoading}
+                  className="w-full h-14 bg-gradient-to-r from-[#39D177] to-[#2FAE63] hover:from-[#2FAE63] hover:to-[#259953] text-white rounded-2xl text-base font-semibold shadow-lg shadow-[#39D177]/30 hover:shadow-xl hover:shadow-[#39D177]/40 transition-all"
                 >
                   {isLoading ? (
                     <div className="flex items-center gap-2">
                       <Loader2 className="w-5 h-5 animate-spin" />
-                      <span>
-                        {isUploading
-                          ? "Mengupload gambar..."
-                          : "Mempublikasikan..."}
-                      </span>
+                      <span>Menyimpan...</span>
                     </div>
                   ) : (
                     <div className="flex items-center gap-2">
                       <CheckCircle2 className="w-5 h-5" />
-                      <span>Publikasikan Properti</span>
+                      <span>Simpan Perubahan</span>
                     </div>
                   )}
                 </Button>
@@ -465,4 +431,12 @@ export default function AddPropertyPage() {
       </div>
     </div>
   );
+}
+
+function EditIcon({ className }: { className?: string }) {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+            <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z" />
+        </svg>
+    )
 }

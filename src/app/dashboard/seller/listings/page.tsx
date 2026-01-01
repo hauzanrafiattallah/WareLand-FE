@@ -178,12 +178,14 @@ export default function ManageListingsPage() {
               >
                 {/* IMAGE */}
                 <div className="relative w-full h-48 bg-gray-100">
-                  <Image
-                    src="/home.png"
-                    alt={item.address}
-                    fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
+                  <Link href={`/dashboard/seller/listings/${item.propertyId}`}>
+                    <Image
+                      src={item.imageUrl || "/home.png"}
+                      alt={item.address}
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                  </Link>
                   {/* ACTIONS */}
                   <div className="absolute top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                     <Link href={`/dashboard/seller/listings/edit/${item.propertyId}`}>
@@ -205,10 +207,12 @@ export default function ManageListingsPage() {
 
                 {/* CONTENT */}
                 <div className="p-4">
-                  <h3 className="font-semibold text-lg text-gray-900 line-clamp-1">
-                    {item.description?.split("\n")[0]?.replace("Title: ", "") ||
-                      `Properti #${item.propertyId}`}
-                  </h3>
+                  <Link href={`/dashboard/seller/listings/${item.propertyId}`}>
+                    <h3 className="font-semibold text-lg text-gray-900 line-clamp-1 hover:text-[#39D177] transition-colors">
+                      {item.description?.split("\n")[0]?.replace("Title: ", "") ||
+                        `Properti #${item.propertyId}`}
+                    </h3>
+                  </Link>
 
                   <p className="text-[#39D177] font-bold text-lg mt-1">
                     Rp {item.price.toLocaleString("id-ID")}
@@ -263,36 +267,33 @@ export default function ManageListingsPage() {
 
       {/* DELETE CONFIRMATION MODAL */}
       <AlertDialog open={open} onOpenChange={setOpen}>
-        <AlertDialogContent className="rounded-2xl max-w-md">
-          <AlertDialogHeader>
-            <div className="flex items-center gap-3 mb-2">
-              <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center">
-                <AlertTriangle className="w-6 h-6 text-red-500" />
-              </div>
-              <AlertDialogTitle className="text-xl">
-                Hapus Properti?
-              </AlertDialogTitle>
+        <AlertDialogContent className="rounded-3xl max-w-md border-0 ring-1 ring-gray-100 shadow-2xl p-0 overflow-hidden">
+          <div className="bg-red-50/50 p-8 flex flex-col items-center pt-10">
+            <div className="w-20 h-20 rounded-full bg-red-100 flex items-center justify-center mb-4 shadow-inner ring-4 ring-white">
+              <AlertTriangle className="w-10 h-10 text-red-500" />
             </div>
-            <AlertDialogDescription className="text-gray-600">
-              Properti yang dihapus tidak dapat dikembalikan. Apakah Anda yakin
-              ingin melanjutkan?
+            <AlertDialogTitle className="text-2xl font-bold text-gray-900 text-center">
+              Hapus Properti?
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-gray-500 text-center mt-2 max-w-xs">
+              Properti yang dihapus tidak dapat dikembalikan. Tindakan ini bersifat permanen.
             </AlertDialogDescription>
-          </AlertDialogHeader>
+          </div>
 
-          <AlertDialogFooter className="flex flex-col-reverse sm:flex-row gap-2 sm:gap-3 mt-4">
-            <AlertDialogCancel className="rounded-full px-6 py-2.5 border-gray-300">
+          <AlertDialogFooter className="p-6 bg-white flex flex-col-reverse sm:flex-row gap-3 items-center justify-center sm:justify-center w-full">
+            <AlertDialogCancel className="w-full sm:w-auto rounded-xl px-8 py-3 border-gray-200 text-gray-700 hover:bg-gray-50 h-12">
               Batal
             </AlertDialogCancel>
             <AlertDialogAction
               onClick={handleConfirmDelete}
-              className="rounded-full px-6 py-2.5 bg-red-500 hover:bg-red-600 text-white"
+              className="w-full sm:w-auto rounded-xl px-8 py-3 bg-red-500 hover:bg-red-600 text-white shadow-lg shadow-red-500/30 h-12 border-0"
             >
               {deleting ? (
                 <Loader2 className="w-4 h-4 animate-spin mr-2" />
               ) : (
                 <Trash2 className="w-4 h-4 mr-2" />
               )}
-              Ya, Hapus
+              Ya, Hapus Permanen
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

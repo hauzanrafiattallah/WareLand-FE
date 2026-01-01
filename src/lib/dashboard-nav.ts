@@ -1,10 +1,9 @@
 import {
-  Home,
-  LayoutDashboard,
-  ShoppingCart,
-  MessageSquare,
-  Heart,
   Eye,
+  Heart,
+  Home,
+  MessageSquare,
+  PlusCircle,
   Settings,
 } from "lucide-react";
 
@@ -16,6 +15,11 @@ export const dashboardNav = {
     subtitle: "Manage your business",
     items: [
       { name: "My Listings", href: "/dashboard/seller/listings", icon: Home },
+      {
+        name: "Tambah Properti",
+        href: "/dashboard/seller/listings/new",
+        icon: PlusCircle,
+      },
       { name: "Settings", href: "/dashboard/seller/settings", icon: Settings },
     ],
   },
