@@ -14,6 +14,7 @@ export interface Property {
   address: string;
   price: number;
   description: string;
+  imageUrl?: string;
   seller: Seller;
 }
 

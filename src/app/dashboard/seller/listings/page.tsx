@@ -64,7 +64,7 @@ export default function ManageListingsPage() {
               <CardContent className="p-0 flex items-center">
                 <div className="w-32 h-32 relative bg-gray-200 shrink-0">
                   <Image
-                    src="/home.png"
+                    src={item.imageUrl || "/home.png"}
                     alt="Property"
                     fill
                     className="object-cover"
