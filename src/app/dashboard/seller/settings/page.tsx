@@ -1,5 +1,6 @@
 "use client";
 
+import { ProfilePhotoUpload } from "@/components/ProfilePhotoUpload";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -13,7 +14,6 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useSetting } from "@/hooks/useSetting";
 import { CheckCircle, Eye, EyeOff, Loader2 } from "lucide-react";
-import Image from "next/image";
 
 export default function SellerSettingsPage() {
   const {
@@ -33,6 +33,10 @@ export default function SellerSettingsPage() {
     "Gagal memperbarui pengaturan toko"
   );
 
+  const handleImageUploaded = (url: string) => {
+    setProfile({ ...profile, imageUrl: url });
+  };
+
   return (
     <main className="p-6 sm:p-10 max-w-3xl mx-auto">
       <h1 className="text-3xl font-semibold text-gray-900 mb-1">
@@ -44,12 +48,11 @@ export default function SellerSettingsPage() {
 
       <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-6">
         <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto text-center sm:text-left">
-          <Image
-            src="/profile.png"
-            width={70}
-            height={70}
-            alt="Avatar"
-            className="rounded-full border"
+          <ProfilePhotoUpload
+            currentImageUrl={profile.imageUrl || "/profile.png"}
+            onImageUploaded={handleImageUploaded}
+            disabled={!editMode}
+            size={70}
           />
 
           <div>
@@ -138,7 +141,8 @@ export default function SellerSettingsPage() {
               disabled
               value={
                 typeof window !== "undefined"
-                  ? JSON.parse(localStorage.getItem("user") || "{}")?.username || "-"
+                  ? JSON.parse(localStorage.getItem("user") || "{}")
+                      ?.username || "-"
                   : "-"
               }
               className="w-full mt-2 px-4 py-3 rounded-xl border bg-gray-100 text-gray-500 border-gray-300"

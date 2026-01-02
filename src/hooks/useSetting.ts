@@ -23,6 +23,7 @@ export function useSetting(successMessage: string, errorMessage: string) {
     phone: "",
     oldPassword: "",
     newPassword: "",
+    imageUrl: "",
   });
 
   useEffect(() => {
@@ -45,6 +46,7 @@ export function useSetting(successMessage: string, errorMessage: string) {
         name: res.data.name ?? "",
         email: res.data.email ?? "",
         phone: res.data.phoneNumber ?? "",
+        imageUrl: res.data.imageUrl ?? "",
       }));
     } catch {
       toast.error("Gagal memuat data");
@@ -61,6 +63,10 @@ export function useSetting(successMessage: string, errorMessage: string) {
         email: profile.email,
         phoneNumber: profile.phone,
       };
+
+      if (profile.imageUrl) {
+        payload.imageUrl = profile.imageUrl;
+      }
 
       if (profile.newPassword) {
         payload.oldPassword = profile.oldPassword;
@@ -82,6 +88,7 @@ export function useSetting(successMessage: string, errorMessage: string) {
             name: profile.name,
             email: profile.email,
             phoneNumber: profile.phone,
+            imageUrl: profile.imageUrl,
           })
         );
       }

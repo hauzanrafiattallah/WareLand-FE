@@ -11,9 +11,9 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { ProfilePhotoUpload } from "@/components/ProfilePhotoUpload";
 import { useSetting } from "@/hooks/useSetting";
 import { CheckCircle, Eye, EyeOff, Loader2 } from "lucide-react";
-import Image from "next/image";
 
 export default function BuyerProfileSettings() {
   const {
@@ -30,6 +30,10 @@ export default function BuyerProfileSettings() {
     setShowNewPassword,
   } = useSetting("Profil berhasil diperbarui!", "Gagal memperbarui profil");
 
+  const handleImageUploaded = (url: string) => {
+    setProfile({ ...profile, imageUrl: url });
+  };
+
   return (
     <main className="p-6 sm:p-10  mx-auto">
       <h1 className="text-3xl font-semibold text-gray-900 mb-1">
@@ -41,12 +45,11 @@ export default function BuyerProfileSettings() {
 
       <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-6">
         <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto text-center sm:text-left">
-          <Image
-            src="/profile.png"
-            width={70}
-            height={70}
-            alt="Avatar"
-            className="rounded-full border"
+          <ProfilePhotoUpload
+            currentImageUrl={profile.imageUrl || "/profile.png"}
+            onImageUploaded={handleImageUploaded}
+            disabled={!editMode}
+            size={70}
           />
 
           <div>
