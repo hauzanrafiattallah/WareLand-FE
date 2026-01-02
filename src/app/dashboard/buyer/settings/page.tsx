@@ -1,3 +1,8 @@
+/**
+ * Buyer Settings Page
+ * User profile and settings management for buyer accounts
+ */
+
 "use client";
 
 import {
@@ -12,10 +17,11 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { ProfilePhotoUpload } from "@/components/ProfilePhotoUpload";
-import { useSetting } from "@/hooks/useSetting";
+import { useSetting } from "@/hooks/user/useSetting";
 import { CheckCircle, Eye, EyeOff, Loader2 } from "lucide-react";
 
 export default function BuyerProfileSettings() {
+  // Initialize settings hook for form state and handlers
   const {
     profile,
     setProfile,
@@ -30,12 +36,17 @@ export default function BuyerProfileSettings() {
     setShowNewPassword,
   } = useSetting("Profil berhasil diperbarui!", "Gagal memperbarui profil");
 
+  /**
+   * Handle profile image upload completion
+   * @param url - Uploaded image URL
+   */
   const handleImageUploaded = (url: string) => {
     setProfile({ ...profile, imageUrl: url });
   };
 
   return (
     <main className="p-6 sm:p-10  mx-auto">
+      {/* Page header */}
       <h1 className="text-3xl font-semibold text-gray-900 mb-1">
         User Profile & Settings
       </h1>
@@ -43,8 +54,10 @@ export default function BuyerProfileSettings() {
         Manage your personal information and security settings.
       </p>
 
+      {/* Profile header card with avatar and edit button */}
       <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-6">
         <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto text-center sm:text-left">
+          {/* Profile photo upload component */}
           <ProfilePhotoUpload
             currentImageUrl={profile.imageUrl || "/profile.png"}
             onImageUploaded={handleImageUploaded}
@@ -52,6 +65,7 @@ export default function BuyerProfileSettings() {
             size={70}
           />
 
+          {/* User info display */}
           <div>
             <h2 className="text-xl font-semibold">
               {profile.name || "Loading..."}
@@ -60,6 +74,7 @@ export default function BuyerProfileSettings() {
               {profile.email || "Loading..."}
             </p>
 
+            {/* Verified badge */}
             <span className="inline-flex items-center gap-1 mt-2 text-xs bg-[#E6FAEF] text-[#1E8E4A] px-3 py-1 rounded-full font-medium border border-[#39D177]/30">
               <CheckCircle size={14} className="text-[#39D177]" />
               Verified Account
@@ -67,6 +82,7 @@ export default function BuyerProfileSettings() {
           </div>
         </div>
 
+        {/* Edit profile button */}
         <button
           onClick={() => setEditMode(true)}
           className="w-full sm:w-auto px-6 py-2 cursor-pointer rounded-full bg-[#39D177] text-white hover:bg-[#2FAE63] transition"
@@ -75,12 +91,14 @@ export default function BuyerProfileSettings() {
         </button>
       </div>
 
+      {/* Personal information form card */}
       <div className="bg-white mt-8 p-6 rounded-xl border border-gray-200 shadow-sm">
         <h3 className="text-lg font-semibold text-gray-900 mb-4">
           Personal Information
         </h3>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Full name field */}
           <div>
             <label className="text-sm text-gray-700">Full Name</label>
             <input
@@ -96,6 +114,7 @@ export default function BuyerProfileSettings() {
             />
           </div>
 
+          {/* Email field */}
           <div>
             <label className="text-sm text-gray-700">Email</label>
             <input
@@ -113,6 +132,7 @@ export default function BuyerProfileSettings() {
             />
           </div>
 
+          {/* Phone number field */}
           <div>
             <label className="text-sm text-gray-700">Phone Number</label>
             <input
@@ -131,6 +151,7 @@ export default function BuyerProfileSettings() {
             />
           </div>
 
+          {/* Username field (read-only) */}
           <div>
             <label className="text-sm text-gray-700">Username</label>
             <input
@@ -145,6 +166,7 @@ export default function BuyerProfileSettings() {
             />
           </div>
 
+          {/* Old password field with visibility toggle */}
           <div>
             <label className="text-sm text-gray-700">Old Password</label>
             <div className="relative mt-2">
@@ -174,6 +196,7 @@ export default function BuyerProfileSettings() {
             </div>
           </div>
 
+          {/* New password field with visibility toggle */}
           <div>
             <label className="text-sm text-gray-700">New Password</label>
             <div className="relative mt-2">
@@ -204,8 +227,10 @@ export default function BuyerProfileSettings() {
           </div>
         </div>
 
+        {/* Edit mode action buttons */}
         {editMode && (
           <div className="mt-6 flex flex-col-reverse sm:flex-row gap-3 sm:gap-4">
+            {/* Cancel button */}
             <button
               onClick={() => setEditMode(false)}
               disabled={isLoading}
@@ -214,6 +239,7 @@ export default function BuyerProfileSettings() {
               Cancel
             </button>
 
+            {/* Save button with loading state */}
             <button
               onClick={saveProfile}
               disabled={isLoading}
@@ -231,6 +257,7 @@ export default function BuyerProfileSettings() {
         )}
       </div>
 
+      {/* Danger zone card for account deletion */}
       <div className="bg-red-50/40 mt-8 p-6 rounded-xl border border-red-200 shadow-sm">
         <h3 className="text-lg font-semibold text-red-500 mb-2">Danger Zone</h3>
 
@@ -239,6 +266,7 @@ export default function BuyerProfileSettings() {
           dibatalkan.
         </p>
 
+        {/* Delete account confirmation dialog */}
         <AlertDialog>
           <AlertDialogTrigger asChild>
             <button className="px-6 py-3 cursor-pointer rounded-xl sm:rounded-full bg-red-500 text-white hover:bg-red-600 transition w-full sm:w-auto">

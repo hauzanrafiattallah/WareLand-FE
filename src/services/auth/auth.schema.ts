@@ -1,11 +1,17 @@
-// auth.schema.ts
+/**
+ * Auth Validation Schemas
+ * Zod schemas for validating authentication form data
+ */
+
 import { z } from "zod";
 
+/** Login form validation schema */
 export const loginSchema = z.object({
   username: z.string().min(1, "Username wajib diisi"),
   password: z.string().min(1, "Password wajib diisi"),
 });
 
+/** Register form validation schema with password confirmation */
 export const registerSchema = z
   .object({
     username: z.string().min(3, "Username minimal 3 karakter"),
@@ -26,5 +32,8 @@ export const registerSchema = z
     path: ["confirmPassword"],
   });
 
+/** Inferred type from login schema */
 export type LoginForm = z.infer<typeof loginSchema>;
+
+/** Inferred type from register schema */
 export type RegisterForm = z.infer<typeof registerSchema>;

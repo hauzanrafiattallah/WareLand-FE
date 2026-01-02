@@ -1,3 +1,8 @@
+/**
+ * Register Page
+ * User registration interface for new users
+ */
+
 "use client";
 
 import { Button } from "@/components/ui/button";
@@ -10,6 +15,7 @@ import Link from "next/link";
 import { useRegister } from "@/hooks/auth/useRegister";
 
 export default function RegisterPage() {
+  // Initialize register hook for form state and handlers
   const {
     role,
     username,
@@ -34,9 +40,10 @@ export default function RegisterPage() {
   } = useRegister();
 
   return (
+    // Page container with centered card layout
     <div className="w-full min-h-screen flex items-center justify-center bg-[#D6F5E7] px-4">
       <Card className="w-full max-w-md p-10 rounded-2xl shadow-xl border border-[#39D177]/20 bg-white space-y-6">
-        {/* Header */}
+        {/* Page header with title and subtitle */}
         <div className="text-center space-y-1">
           <h1 className="text-3xl font-bold text-[#2FAE63]">Create Account</h1>
           <p className="text-gray-600 text-sm">
@@ -44,9 +51,9 @@ export default function RegisterPage() {
           </p>
         </div>
 
-        {/* Form */}
+        {/* Registration form fields */}
         <div className="space-y-4">
-          {/* Username */}
+          {/* Username input field */}
           <div className="space-y-1">
             <Label className="text-[#2FAE63] text-sm">Username</Label>
             <Input
@@ -58,7 +65,7 @@ export default function RegisterPage() {
             />
           </div>
 
-          {/* Nama Lengkap */}
+          {/* Full name input field */}
           <div className="space-y-1">
             <Label className="text-[#2FAE63] text-sm">Nama Lengkap</Label>
             <Input
@@ -70,7 +77,7 @@ export default function RegisterPage() {
             />
           </div>
 
-          {/* Email */}
+          {/* Email input field */}
           <div className="space-y-1">
             <Label className="text-[#2FAE63] text-sm">Email</Label>
             <Input
@@ -83,7 +90,7 @@ export default function RegisterPage() {
             />
           </div>
 
-          {/* Nomor Telepon */}
+          {/* Phone number input field */}
           <div className="space-y-1">
             <Label className="text-[#2FAE63] text-sm">Nomor Telepon</Label>
             <Input
@@ -95,7 +102,7 @@ export default function RegisterPage() {
             />
           </div>
 
-          {/* Password */}
+          {/* Password input field with visibility toggle */}
           <div className="space-y-1">
             <Label className="text-[#2FAE63] text-sm">Password</Label>
             <div className="relative">
@@ -107,6 +114,7 @@ export default function RegisterPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 disabled={isLoading}
               />
+              {/* Password visibility toggle button */}
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
@@ -117,7 +125,7 @@ export default function RegisterPage() {
             </div>
           </div>
 
-          {/* Konfirmasi Password */}
+          {/* Confirm password input field with visibility toggle */}
           <div className="space-y-1">
             <Label className="text-[#2FAE63] text-sm">
               Konfirmasi Password
@@ -131,6 +139,7 @@ export default function RegisterPage() {
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 disabled={isLoading}
               />
+              {/* Confirm password visibility toggle button */}
               <button
                 type="button"
                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
@@ -141,11 +150,12 @@ export default function RegisterPage() {
             </div>
           </div>
 
-          {/* Role */}
+          {/* Role selection buttons */}
           <div className="space-y-2">
             <Label className="text-[#2FAE63] text-sm">Daftar sebagai:</Label>
 
             <div className="grid grid-cols-2 gap-2">
+              {/* Buyer role button */}
               <button
                 type="button"
                 onClick={() => setRole("pembeli")}
@@ -160,6 +170,7 @@ export default function RegisterPage() {
                 Pembeli
               </button>
 
+              {/* Seller role button */}
               <button
                 type="button"
                 onClick={() => setRole("penjual")}
@@ -177,7 +188,7 @@ export default function RegisterPage() {
           </div>
         </div>
 
-        {/* Submit */}
+        {/* Submit button with loading state */}
         <Button
           onClick={handleRegister}
           disabled={isLoading}
@@ -190,7 +201,7 @@ export default function RegisterPage() {
           )}
         </Button>
 
-        {/* Footer */}
+        {/* Footer with login link */}
         <p className="text-sm text-center text-gray-700">
           Sudah punya akun?{" "}
           <Link

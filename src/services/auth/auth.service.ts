@@ -1,12 +1,23 @@
+/**
+ * Auth Service
+ * API calls for authentication-related operations
+ */
+
 import { axiosInstance } from "@/lib/axios";
-import { LoginPayload, RegisterApiPayload } from "./auth.payload";
 import {
-  ApiResponse,
+  LoginPayload,
   LoginResponseData,
+  RegisterApiPayload,
   RegisterResponseData,
-} from "./auth.response";
+} from "@/types/auth";
+import { ApiResponse } from "@/types/common";
 
 export const authService = {
+  /**
+   * Authenticate user with username and password
+   * @param payload - Login credentials
+   * @returns Token and user profile data
+   */
   login: async (payload: LoginPayload) => {
     const { data } = await axiosInstance.post<ApiResponse<LoginResponseData>>(
       "/api/auth/login",
@@ -15,6 +26,11 @@ export const authService = {
     return data;
   },
 
+  /**
+   * Register new user account
+   * @param payload - Registration data including role
+   * @returns Created user profile
+   */
   register: async (payload: RegisterApiPayload) => {
     const { data } = await axiosInstance.post<
       ApiResponse<RegisterResponseData>
@@ -22,6 +38,10 @@ export const authService = {
     return data;
   },
 
+  /**
+   * Logout current user session
+   * @returns Confirmation response
+   */
   logout: async () => {
     const { data } = await axiosInstance.post<ApiResponse<null>>(
       "/api/auth/logout"

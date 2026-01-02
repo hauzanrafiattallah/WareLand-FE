@@ -1,3 +1,8 @@
+/**
+ * useRegister Hook
+ * Manages registration form state and user creation logic
+ */
+
 "use client";
 
 import axios from "axios";
@@ -5,14 +10,18 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 
+import { RegisterRole } from "@/types/auth";
 import { registerSchema } from "@/services/auth/auth.schema";
 import { authService } from "@/services/auth/auth.service";
 
-export type RegisterRole = "pembeli" | "penjual";
-
+/**
+ * Custom hook for handling user registration
+ * @returns Registration form state and handlers
+ */
 export function useRegister() {
   const router = useRouter();
 
+  // Form input states
   const [role, setRole] = useState<RegisterRole>("pembeli");
   const [username, setUsername] = useState("");
   const [name, setName] = useState("");
@@ -21,16 +30,22 @@ export function useRegister() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
+  // UI states
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  /**
+   * Handle registration form submission
+   * Validates input, calls API, and redirects to login on success
+   */
   const handleRegister = async (): Promise<void> => {
     setIsLoading(true);
     setError(null);
 
     try {
+      // Validate form data with Zod
       const validation = registerSchema.safeParse({
         username,
         name,
@@ -48,8 +63,10 @@ export function useRegister() {
         return;
       }
 
+      // Convert role to API format
       const apiRole = role === "pembeli" ? "BUYER" : "SELLER";
 
+      // Call register API
       await authService.register({
         username,
         name,
@@ -62,6 +79,7 @@ export function useRegister() {
       toast.success("Registrasi berhasil. Silakan login.");
       router.push("/login");
     } catch (err) {
+      // Handle API errors
       const message = axios.isAxiosError(err)
         ? err.response?.data?.message ?? "Gagal registrasi"
         : "Terjadi kesalahan sistem";
@@ -74,6 +92,7 @@ export function useRegister() {
   };
 
   return {
+    // Form states
     role,
     username,
     name,
@@ -86,6 +105,7 @@ export function useRegister() {
     showConfirmPassword,
     error,
 
+    // Form setters
     setRole,
     setUsername,
     setName,
@@ -96,6 +116,7 @@ export function useRegister() {
     setShowPassword,
     setShowConfirmPassword,
 
+    // Actions
     handleRegister,
   };
 }
