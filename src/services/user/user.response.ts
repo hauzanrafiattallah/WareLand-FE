@@ -5,6 +5,7 @@ export interface UserProfile {
   email: string;
   phoneNumber: string;
   role: "BUYER" | "SELLER";
+  imageUrl?: string;
   createdAt: string;
   updatedAt: string;
 }

@@ -4,4 +4,5 @@ export interface UpdateUserPayload {
   phoneNumber: string;
   oldPassword?: string;
   newPassword?: string;
+  imageUrl?: string;
 }
