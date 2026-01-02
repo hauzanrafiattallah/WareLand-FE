@@ -1,6 +1,6 @@
 /**
- * Auth Service
- * API calls for authentication-related operations
+ * Layanan Autentikasi
+ * Panggilan API untuk operasi terkait autentikasi
  */
 
 import { axiosInstance } from "@/lib/axios";
@@ -14,9 +14,9 @@ import { ApiResponse } from "@/types/common";
 
 export const authService = {
   /**
-   * Authenticate user with username and password
-   * @param payload - Login credentials
-   * @returns Token and user profile data
+   * Autentikasi pengguna dengan username dan password
+   * @param payload - Kredensial login
+   * @returns Token dan data profil pengguna
    */
   login: async (payload: LoginPayload) => {
     const { data } = await axiosInstance.post<ApiResponse<LoginResponseData>>(
@@ -27,9 +27,9 @@ export const authService = {
   },
 
   /**
-   * Register new user account
-   * @param payload - Registration data including role
-   * @returns Created user profile
+   * Registrasi akun pengguna baru
+   * @param payload - Data registrasi termasuk role
+   * @returns Profil pengguna yang dibuat
    */
   register: async (payload: RegisterApiPayload) => {
     const { data } = await axiosInstance.post<
@@ -39,8 +39,8 @@ export const authService = {
   },
 
   /**
-   * Logout current user session
-   * @returns Confirmation response
+   * Logout sesi pengguna saat ini
+   * @returns Respons konfirmasi
    */
   logout: async () => {
     const { data } = await axiosInstance.post<ApiResponse<null>>(

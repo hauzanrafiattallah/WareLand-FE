@@ -1,6 +1,6 @@
 /**
- * Seller Dashboard Layout
- * Wrapper layout for all seller dashboard pages with sidebar navigation
+ * Layout Dashboard Seller
+ * Layout pembungkus untuk semua halaman dashboard penjual dengan navigasi sidebar
  */
 
 "use client";
@@ -20,17 +20,17 @@ export default function SellerLayout({
 }: {
   children: React.ReactNode;
 }) {
-  // Guard route for seller role only
+  // Proteksi route hanya untuk role seller
   useRoleGuard("SELLER");
 
-  // Initialize hooks for layout functionality
+  // Inisialisasi hook untuk fungsi layout
   const { logout } = useLogout();
   const sidebar = useDashboardSidebar();
   const nav = useRoleNav("SELLER");
 
   return (
     <div className="min-h-screen bg-gray-50 flex">
-      {/* Sidebar navigation component */}
+      {/* Komponen navigasi sidebar */}
       <DashboardSidebar
         {...nav}
         isOpen={sidebar.isOpen}
@@ -39,7 +39,7 @@ export default function SellerLayout({
       />
 
       <div className="flex-1 flex flex-col">
-        {/* Mobile header with menu toggle */}
+        {/* Header mobile dengan toggle menu */}
         <header className="lg:hidden bg-white border-b px-4 py-3 flex items-center">
           <Button variant="ghost" size="icon" onClick={sidebar.open}>
             <Menu className="w-5 h-5" />
@@ -47,7 +47,7 @@ export default function SellerLayout({
           <span className="ml-3 font-semibold">Seller Dashboard</span>
         </header>
 
-        {/* Main content area */}
+        {/* Area konten utama */}
         <main className="flex-1 p-6 lg:p-10 overflow-auto">{children}</main>
       </div>
     </div>

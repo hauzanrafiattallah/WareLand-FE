@@ -1,19 +1,23 @@
+/**
+ * Komponen PropertyFilter
+ * Form filter untuk pencarian properti
+ */
+
 "use client";
 
 import { useState } from "react";
+import { PropertyFilterParams } from "./property.types";
 
-type FilterParams = {
-  keyword: string;
-  location: string;
-  type: string;
-  priceRange: string;
-};
+interface PropertyFilterProps {
+  onFilter: (params: PropertyFilterParams) => void;
+}
 
-export default function PropertyFilter({
-  onFilter,
-}: {
-  onFilter: (params: FilterParams) => void;
-}) {
+/**
+ * Menampilkan form filter properti dengan keyword, lokasi, tipe, dan range harga
+ * @param props - Props komponen
+ */
+export default function PropertyFilter({ onFilter }: PropertyFilterProps) {
+  // State form filter
   const [keyword, setKeyword] = useState("");
   const [location, setLocation] = useState("");
   const [type, setType] = useState("");
@@ -21,8 +25,9 @@ export default function PropertyFilter({
 
   return (
     <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm mb-8">
+      {/* Grid input filter */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-
+        {/* Input keyword pencarian */}
         <input
           type="text"
           placeholder="Cari properti..."
@@ -31,6 +36,7 @@ export default function PropertyFilter({
           onChange={(e) => setKeyword(e.target.value)}
         />
 
+        {/* Input lokasi */}
         <input
           type="text"
           placeholder="Lokasi"
@@ -39,6 +45,7 @@ export default function PropertyFilter({
           onChange={(e) => setLocation(e.target.value)}
         />
 
+        {/* Select tipe properti */}
         <select
           className="border border-gray-300 rounded-xl px-4 py-3"
           value={type}
@@ -50,6 +57,7 @@ export default function PropertyFilter({
           <option value="villa">Villa</option>
         </select>
 
+        {/* Select range harga */}
         <select
           className="border border-gray-300 rounded-xl px-4 py-3"
           value={priceRange}
@@ -62,10 +70,9 @@ export default function PropertyFilter({
         </select>
       </div>
 
+      {/* Tombol terapkan filter */}
       <button
-        onClick={() =>
-          onFilter({ keyword, location, type, priceRange })
-        }
+        onClick={() => onFilter({ keyword, location, type, priceRange })}
         className="mt-4 px-6 py-3 rounded-full bg-[#39D177] text-white hover:bg-[#2FAE63] transition"
       >
         Terapkan Filter

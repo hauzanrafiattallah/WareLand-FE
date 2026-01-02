@@ -1,21 +1,21 @@
 /**
- * Auth Types
- * Type definitions for authentication-related data
+ * Tipe Autentikasi
+ * Definisi tipe untuk data terkait autentikasi
  */
 
-/** Available user roles in the system */
+/** Role pengguna yang tersedia di sistem */
 export type UserRole = "SELLER" | "BUYER" | "ADMIN";
 
-/** Role options for registration form (Indonesian) */
+/** Opsi role untuk form registrasi (Bahasa Indonesia) */
 export type RegisterRole = "pembeli" | "penjual";
 
-/** Payload for login API request */
+/** Payload untuk request API login */
 export interface LoginPayload {
   username: string;
   password: string;
 }
 
-/** Payload for register API request */
+/** Payload untuk request API registrasi */
 export interface RegisterApiPayload {
   username: string;
   password: string;
@@ -25,13 +25,13 @@ export interface RegisterApiPayload {
   phoneNumber: string;
 }
 
-/** Login form data structure */
+/** Struktur data form login */
 export interface LoginFormData {
   username: string;
   password: string;
 }
 
-/** Register form data structure */
+/** Struktur data form registrasi */
 export interface RegisterFormData {
   username: string;
   name: string;

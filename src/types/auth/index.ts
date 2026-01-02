@@ -1,7 +1,7 @@
 /**
- * Auth Types - Barrel Export
- * Re-exports all authentication-related type definitions
+ * Tipe Autentikasi - Barrel Export
+ * Re-export semua definisi tipe terkait autentikasi
  */
 
-export * from "./auth.responses";
 export * from "./auth.types";
+export * from "./auth.responses";

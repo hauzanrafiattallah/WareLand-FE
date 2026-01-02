@@ -1,6 +1,6 @@
 /**
- * useRoleGuard Hook
- * Protects routes based on user role
+ * Hook useRoleGuard
+ * Melindungi route berdasarkan role pengguna
  */
 
 "use client";
@@ -11,19 +11,19 @@ import { useEffect } from "react";
 import { UserRole } from "@/types/auth";
 
 /**
- * Custom hook for role-based route protection
- * Redirects unauthorized users to appropriate pages
- * @param allowedRole - The role allowed to access this route
+ * Custom hook untuk proteksi route berdasarkan role
+ * Mengarahkan pengguna yang tidak berwenang ke halaman yang sesuai
+ * @param allowedRole - Role yang diizinkan mengakses route ini
  */
 export function useRoleGuard(allowedRole: UserRole) {
   const router = useRouter();
 
   useEffect(() => {
-    // Check for authentication token
+    // Cek token autentikasi
     const token = localStorage.getItem("accessToken");
     const userRaw = localStorage.getItem("user");
 
-    // Redirect to login if not authenticated
+    // Redirect ke login jika tidak terautentikasi
     if (!token || !userRaw) {
       router.replace("/login");
       return;
@@ -32,27 +32,27 @@ export function useRoleGuard(allowedRole: UserRole) {
     try {
       const user = JSON.parse(userRaw);
 
-      // Allow access if role matches
+      // Izinkan akses jika role cocok
       if (user.role === allowedRole) {
         return;
       }
 
-      // Redirect BUYER to buyer dashboard
+      // Redirect BUYER ke dashboard buyer
       if (user.role === "BUYER") {
         router.replace("/dashboard/buyer");
         return;
       }
 
-      // Redirect SELLER to seller dashboard
+      // Redirect SELLER ke dashboard seller
       if (user.role === "SELLER") {
         router.replace("/dashboard/seller");
         return;
       }
 
-      // Fallback to login for unknown roles
+      // Fallback ke login untuk role yang tidak dikenal
       router.replace("/login");
     } catch {
-      // Handle JSON parse errors
+      // Tangani error parsing JSON
       router.replace("/login");
     }
   }, [allowedRole, router]);

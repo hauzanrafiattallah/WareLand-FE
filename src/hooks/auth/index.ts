@@ -1,6 +1,6 @@
 /**
- * Auth Hooks - Barrel Export
- * Re-exports all authentication-related hooks
+ * Hook Autentikasi - Barrel Export
+ * Re-export semua hook terkait autentikasi
  */
 
 export * from "./useLogin";

@@ -1,6 +1,6 @@
 "use client";
 
-import CatalogPropertyCard from "@/components/CatalogPropertyCard";
+import { CatalogPropertyCard } from "@/components/property";
 import { Button } from "@/components/ui/button";
 import { useWishlist } from "@/hooks/property/useWishlist";
 import { Heart, Trash2 } from "lucide-react";

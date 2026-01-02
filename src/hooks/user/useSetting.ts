@@ -1,6 +1,6 @@
 /**
- * useSetting Hook
- * Manages user profile settings state and operations
+ * Hook useSetting
+ * Mengelola state pengaturan profil pengguna dan operasinya
  */
 
 "use client";
@@ -13,24 +13,24 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 /**
- * Custom hook for managing user settings
- * @param successMessage - Message to show on successful save
- * @param errorMessage - Message to show on save error
- * @returns Settings state and handlers
+ * Custom hook untuk mengelola pengaturan pengguna
+ * @param successMessage - Pesan yang ditampilkan saat berhasil menyimpan
+ * @param errorMessage - Pesan yang ditampilkan saat gagal menyimpan
+ * @returns State dan handler pengaturan
  */
 export function useSetting(successMessage: string, errorMessage: string) {
   const router = useRouter();
 
-  // UI states
+  // State UI
   const [editMode, setEditMode] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [userId, setUserId] = useState<number | null>(null);
 
-  // Password visibility states
+  // State visibilitas password
   const [showOldPassword, setShowOldPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
 
-  // Profile form state
+  // State form profil
   const [profile, setProfile] = useState({
     name: "",
     email: "",
@@ -41,8 +41,8 @@ export function useSetting(successMessage: string, errorMessage: string) {
   });
 
   /**
-   * Initialize user data on mount
-   * Checks authentication and fetches profile
+   * Inisialisasi data pengguna saat mount
+   * Cek autentikasi dan ambil profil
    */
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
@@ -57,7 +57,7 @@ export function useSetting(successMessage: string, errorMessage: string) {
   }, [router]);
 
   /**
-   * Fetch current user profile from API
+   * Ambil profil pengguna saat ini dari API
    */
   const fetchProfile = async () => {
     try {
@@ -75,39 +75,39 @@ export function useSetting(successMessage: string, errorMessage: string) {
   };
 
   /**
-   * Save profile changes to API
-   * Updates local storage on success
+   * Simpan perubahan profil ke API
+   * Update local storage jika berhasil
    */
   const saveProfile = async () => {
     if (!userId) return;
     setIsLoading(true);
 
     try {
-      // Build update payload
+      // Bangun payload update
       const payload: UpdateUserPayload = {
         name: profile.name,
         email: profile.email,
         phoneNumber: profile.phone,
       };
 
-      // Add image URL if present
+      // Tambahkan URL gambar jika ada
       if (profile.imageUrl) {
         payload.imageUrl = profile.imageUrl;
       }
 
-      // Add password fields if changing password
+      // Tambahkan field password jika mengubah password
       if (profile.newPassword) {
         payload.oldPassword = profile.oldPassword;
         payload.newPassword = profile.newPassword;
       }
 
-      // Call update API
+      // Panggil API update
       await userService.updateProfile(userId, payload);
 
       toast.success(successMessage);
       setEditMode(false);
 
-      // Update local storage with new profile data
+      // Update local storage dengan data profil baru
       const storedUser = localStorage.getItem("user");
       if (storedUser) {
         const u = JSON.parse(storedUser);
@@ -123,10 +123,10 @@ export function useSetting(successMessage: string, errorMessage: string) {
         );
       }
 
-      // Clear password fields
+      // Bersihkan field password
       setProfile((p) => ({ ...p, oldPassword: "", newPassword: "" }));
     } catch (err) {
-      // Handle API errors
+      // Tangani error API
       if (err instanceof AxiosError) {
         toast.error(err.response?.data?.message || errorMessage);
       } else {
@@ -138,8 +138,8 @@ export function useSetting(successMessage: string, errorMessage: string) {
   };
 
   /**
-   * Delete user account permanently
-   * Clears session and redirects to login
+   * Hapus akun pengguna secara permanen
+   * Bersihkan sesi dan redirect ke login
    */
   const deleteAccount = async () => {
     if (!userId) return;
@@ -148,14 +148,14 @@ export function useSetting(successMessage: string, errorMessage: string) {
     try {
       await userService.deleteAccount(userId);
 
-      // Clear local storage
+      // Bersihkan local storage
       localStorage.removeItem("accessToken");
       localStorage.removeItem("user");
 
       toast.success("Akun berhasil dihapus");
       router.replace("/login");
     } catch (err) {
-      // Handle API errors
+      // Tangani error API
       if (err instanceof AxiosError) {
         toast.error(err.response?.data?.message || "Gagal menghapus akun");
       } else {
@@ -167,22 +167,22 @@ export function useSetting(successMessage: string, errorMessage: string) {
   };
 
   return {
-    // Profile state
+    // State profil
     profile,
     setProfile,
 
-    // UI states
+    // State UI
     editMode,
     setEditMode,
     isLoading,
 
-    // Password visibility
+    // Visibilitas password
     showOldPassword,
     setShowOldPassword,
     showNewPassword,
     setShowNewPassword,
 
-    // Actions
+    // Aksi
     saveProfile,
     deleteAccount,
   };

@@ -1,9 +1,9 @@
 /**
- * User Types
- * Type definitions for user-related data
+ * Tipe Pengguna
+ * Definisi tipe untuk data terkait pengguna
  */
 
-/** Complete user profile data */
+/** Data profil pengguna lengkap */
 export interface UserProfile {
   id: number;
   username: string;
@@ -16,7 +16,7 @@ export interface UserProfile {
   updatedAt: string;
 }
 
-/** Payload for updating user profile */
+/** Payload untuk memperbarui profil pengguna */
 export interface UpdateUserPayload {
   name: string;
   email: string;
@@ -26,7 +26,7 @@ export interface UpdateUserPayload {
   imageUrl?: string;
 }
 
-/** State structure for settings form */
+/** Struktur state untuk form pengaturan */
 export interface SettingProfileState {
   name: string;
   email: string;

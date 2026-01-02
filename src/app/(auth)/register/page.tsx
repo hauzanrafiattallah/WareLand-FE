@@ -1,6 +1,6 @@
 /**
- * Register Page
- * User registration interface for new users
+ * Halaman Registrasi
+ * Antarmuka registrasi untuk pengguna baru
  */
 
 "use client";
@@ -15,7 +15,7 @@ import Link from "next/link";
 import { useRegister } from "@/hooks/auth/useRegister";
 
 export default function RegisterPage() {
-  // Initialize register hook for form state and handlers
+  // Inisialisasi hook register untuk state dan handler form
   const {
     role,
     username,
@@ -40,10 +40,10 @@ export default function RegisterPage() {
   } = useRegister();
 
   return (
-    // Page container with centered card layout
+    // Container halaman dengan layout kartu di tengah
     <div className="w-full min-h-screen flex items-center justify-center bg-[#D6F5E7] px-4">
       <Card className="w-full max-w-md p-10 rounded-2xl shadow-xl border border-[#39D177]/20 bg-white space-y-6">
-        {/* Page header with title and subtitle */}
+        {/* Header halaman dengan judul dan subjudul */}
         <div className="text-center space-y-1">
           <h1 className="text-3xl font-bold text-[#2FAE63]">Create Account</h1>
           <p className="text-gray-600 text-sm">
@@ -51,9 +51,9 @@ export default function RegisterPage() {
           </p>
         </div>
 
-        {/* Registration form fields */}
+        {/* Field input form registrasi */}
         <div className="space-y-4">
-          {/* Username input field */}
+          {/* Field input username */}
           <div className="space-y-1">
             <Label className="text-[#2FAE63] text-sm">Username</Label>
             <Input
@@ -65,7 +65,7 @@ export default function RegisterPage() {
             />
           </div>
 
-          {/* Full name input field */}
+          {/* Field input nama lengkap */}
           <div className="space-y-1">
             <Label className="text-[#2FAE63] text-sm">Nama Lengkap</Label>
             <Input
@@ -77,7 +77,7 @@ export default function RegisterPage() {
             />
           </div>
 
-          {/* Email input field */}
+          {/* Field input email */}
           <div className="space-y-1">
             <Label className="text-[#2FAE63] text-sm">Email</Label>
             <Input
@@ -90,7 +90,7 @@ export default function RegisterPage() {
             />
           </div>
 
-          {/* Phone number input field */}
+          {/* Field input nomor telepon */}
           <div className="space-y-1">
             <Label className="text-[#2FAE63] text-sm">Nomor Telepon</Label>
             <Input
@@ -102,7 +102,7 @@ export default function RegisterPage() {
             />
           </div>
 
-          {/* Password input field with visibility toggle */}
+          {/* Field input password dengan toggle visibilitas */}
           <div className="space-y-1">
             <Label className="text-[#2FAE63] text-sm">Password</Label>
             <div className="relative">
@@ -114,7 +114,7 @@ export default function RegisterPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 disabled={isLoading}
               />
-              {/* Password visibility toggle button */}
+              {/* Tombol toggle visibilitas password */}
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
@@ -125,7 +125,7 @@ export default function RegisterPage() {
             </div>
           </div>
 
-          {/* Confirm password input field with visibility toggle */}
+          {/* Field input konfirmasi password dengan toggle visibilitas */}
           <div className="space-y-1">
             <Label className="text-[#2FAE63] text-sm">
               Konfirmasi Password
@@ -139,7 +139,7 @@ export default function RegisterPage() {
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 disabled={isLoading}
               />
-              {/* Confirm password visibility toggle button */}
+              {/* Tombol toggle visibilitas konfirmasi password */}
               <button
                 type="button"
                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
@@ -150,12 +150,12 @@ export default function RegisterPage() {
             </div>
           </div>
 
-          {/* Role selection buttons */}
+          {/* Tombol pemilihan role */}
           <div className="space-y-2">
             <Label className="text-[#2FAE63] text-sm">Daftar sebagai:</Label>
 
             <div className="grid grid-cols-2 gap-2">
-              {/* Buyer role button */}
+              {/* Tombol role pembeli */}
               <button
                 type="button"
                 onClick={() => setRole("pembeli")}
@@ -170,7 +170,7 @@ export default function RegisterPage() {
                 Pembeli
               </button>
 
-              {/* Seller role button */}
+              {/* Tombol role penjual */}
               <button
                 type="button"
                 onClick={() => setRole("penjual")}
@@ -188,7 +188,7 @@ export default function RegisterPage() {
           </div>
         </div>
 
-        {/* Submit button with loading state */}
+        {/* Tombol submit dengan state loading */}
         <Button
           onClick={handleRegister}
           disabled={isLoading}
@@ -201,7 +201,7 @@ export default function RegisterPage() {
           )}
         </Button>
 
-        {/* Footer with login link */}
+        {/* Footer dengan link login */}
         <p className="text-sm text-center text-gray-700">
           Sudah punya akun?{" "}
           <Link

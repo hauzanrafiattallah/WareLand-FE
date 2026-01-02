@@ -1,6 +1,6 @@
 /**
- * User Hooks - Barrel Export
- * Re-exports all user-related hooks
+ * Hook Pengguna - Barrel Export
+ * Re-export semua hook terkait pengguna
  */
 
 export * from "./useSetting";

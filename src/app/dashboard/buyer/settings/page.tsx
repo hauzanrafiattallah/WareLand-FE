@@ -1,10 +1,11 @@
 /**
- * Buyer Settings Page
- * User profile and settings management for buyer accounts
+ * Halaman Pengaturan Buyer
+ * Manajemen profil pengguna dan pengaturan untuk akun pembeli
  */
 
 "use client";
 
+import { ProfilePhotoUpload } from "@/components/profile";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -16,12 +17,11 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { ProfilePhotoUpload } from "@/components/ProfilePhotoUpload";
 import { useSetting } from "@/hooks/user/useSetting";
 import { CheckCircle, Eye, EyeOff, Loader2 } from "lucide-react";
 
 export default function BuyerProfileSettings() {
-  // Initialize settings hook for form state and handlers
+  // Inisialisasi hook pengaturan untuk state dan handler form
   const {
     profile,
     setProfile,
@@ -37,8 +37,8 @@ export default function BuyerProfileSettings() {
   } = useSetting("Profil berhasil diperbarui!", "Gagal memperbarui profil");
 
   /**
-   * Handle profile image upload completion
-   * @param url - Uploaded image URL
+   * Menangani selesainya upload foto profil
+   * @param url - URL gambar yang diupload
    */
   const handleImageUploaded = (url: string) => {
     setProfile({ ...profile, imageUrl: url });
@@ -46,7 +46,7 @@ export default function BuyerProfileSettings() {
 
   return (
     <main className="p-6 sm:p-10  mx-auto">
-      {/* Page header */}
+      {/* Header halaman */}
       <h1 className="text-3xl font-semibold text-gray-900 mb-1">
         User Profile & Settings
       </h1>
@@ -54,10 +54,10 @@ export default function BuyerProfileSettings() {
         Manage your personal information and security settings.
       </p>
 
-      {/* Profile header card with avatar and edit button */}
+      {/* Kartu header profil dengan avatar dan tombol edit */}
       <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-6">
         <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto text-center sm:text-left">
-          {/* Profile photo upload component */}
+          {/* Komponen upload foto profil */}
           <ProfilePhotoUpload
             currentImageUrl={profile.imageUrl || "/profile.png"}
             onImageUploaded={handleImageUploaded}
@@ -65,7 +65,7 @@ export default function BuyerProfileSettings() {
             size={70}
           />
 
-          {/* User info display */}
+          {/* Tampilan info pengguna */}
           <div>
             <h2 className="text-xl font-semibold">
               {profile.name || "Loading..."}
@@ -74,7 +74,7 @@ export default function BuyerProfileSettings() {
               {profile.email || "Loading..."}
             </p>
 
-            {/* Verified badge */}
+            {/* Badge terverifikasi */}
             <span className="inline-flex items-center gap-1 mt-2 text-xs bg-[#E6FAEF] text-[#1E8E4A] px-3 py-1 rounded-full font-medium border border-[#39D177]/30">
               <CheckCircle size={14} className="text-[#39D177]" />
               Verified Account
@@ -82,7 +82,7 @@ export default function BuyerProfileSettings() {
           </div>
         </div>
 
-        {/* Edit profile button */}
+        {/* Tombol edit profil */}
         <button
           onClick={() => setEditMode(true)}
           className="w-full sm:w-auto px-6 py-2 cursor-pointer rounded-full bg-[#39D177] text-white hover:bg-[#2FAE63] transition"
@@ -91,14 +91,14 @@ export default function BuyerProfileSettings() {
         </button>
       </div>
 
-      {/* Personal information form card */}
+      {/* Kartu form informasi personal */}
       <div className="bg-white mt-8 p-6 rounded-xl border border-gray-200 shadow-sm">
         <h3 className="text-lg font-semibold text-gray-900 mb-4">
           Personal Information
         </h3>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Full name field */}
+          {/* Field nama lengkap */}
           <div>
             <label className="text-sm text-gray-700">Full Name</label>
             <input
@@ -114,7 +114,7 @@ export default function BuyerProfileSettings() {
             />
           </div>
 
-          {/* Email field */}
+          {/* Field email */}
           <div>
             <label className="text-sm text-gray-700">Email</label>
             <input
@@ -132,7 +132,7 @@ export default function BuyerProfileSettings() {
             />
           </div>
 
-          {/* Phone number field */}
+          {/* Field nomor telepon */}
           <div>
             <label className="text-sm text-gray-700">Phone Number</label>
             <input
@@ -151,7 +151,7 @@ export default function BuyerProfileSettings() {
             />
           </div>
 
-          {/* Username field (read-only) */}
+          {/* Field username (hanya baca) */}
           <div>
             <label className="text-sm text-gray-700">Username</label>
             <input
@@ -159,14 +159,15 @@ export default function BuyerProfileSettings() {
               disabled
               value={
                 typeof window !== "undefined"
-                  ? JSON.parse(localStorage.getItem("user") || "{}")?.username || "-"
+                  ? JSON.parse(localStorage.getItem("user") || "{}")
+                      ?.username || "-"
                   : "-"
               }
               className="w-full mt-2 px-4 py-3 rounded-xl border bg-gray-100 text-gray-500 border-gray-300"
             />
           </div>
 
-          {/* Old password field with visibility toggle */}
+          {/* Field password lama dengan toggle visibilitas */}
           <div>
             <label className="text-sm text-gray-700">Old Password</label>
             <div className="relative mt-2">
@@ -196,7 +197,7 @@ export default function BuyerProfileSettings() {
             </div>
           </div>
 
-          {/* New password field with visibility toggle */}
+          {/* Field password baru dengan toggle visibilitas */}
           <div>
             <label className="text-sm text-gray-700">New Password</label>
             <div className="relative mt-2">
@@ -227,10 +228,10 @@ export default function BuyerProfileSettings() {
           </div>
         </div>
 
-        {/* Edit mode action buttons */}
+        {/* Tombol aksi mode edit */}
         {editMode && (
           <div className="mt-6 flex flex-col-reverse sm:flex-row gap-3 sm:gap-4">
-            {/* Cancel button */}
+            {/* Tombol batal */}
             <button
               onClick={() => setEditMode(false)}
               disabled={isLoading}
@@ -239,7 +240,7 @@ export default function BuyerProfileSettings() {
               Cancel
             </button>
 
-            {/* Save button with loading state */}
+            {/* Tombol simpan dengan state loading */}
             <button
               onClick={saveProfile}
               disabled={isLoading}
@@ -257,7 +258,7 @@ export default function BuyerProfileSettings() {
         )}
       </div>
 
-      {/* Danger zone card for account deletion */}
+      {/* Kartu zona berbahaya untuk hapus akun */}
       <div className="bg-red-50/40 mt-8 p-6 rounded-xl border border-red-200 shadow-sm">
         <h3 className="text-lg font-semibold text-red-500 mb-2">Danger Zone</h3>
 
@@ -266,7 +267,7 @@ export default function BuyerProfileSettings() {
           dibatalkan.
         </p>
 
-        {/* Delete account confirmation dialog */}
+        {/* Dialog konfirmasi hapus akun */}
         <AlertDialog>
           <AlertDialogTrigger asChild>
             <button className="px-6 py-3 cursor-pointer rounded-xl sm:rounded-full bg-red-500 text-white hover:bg-red-600 transition w-full sm:w-auto">

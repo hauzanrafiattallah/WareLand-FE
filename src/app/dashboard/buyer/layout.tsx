@@ -1,6 +1,6 @@
 /**
- * Buyer Dashboard Layout
- * Wrapper layout for all buyer dashboard pages with sidebar navigation
+ * Layout Dashboard Buyer
+ * Layout pembungkus untuk semua halaman dashboard pembeli dengan navigasi sidebar
  */
 
 "use client";
@@ -18,17 +18,17 @@ export default function BuyerLayout({
 }: {
   children: React.ReactNode;
 }) {
-  // Guard route for buyer role only
+  // Proteksi route hanya untuk role buyer
   useRoleGuard("BUYER");
 
-  // Initialize hooks for layout functionality
+  // Inisialisasi hook untuk fungsi layout
   const { logout } = useLogout();
   const sidebar = useDashboardSidebar();
   const nav = useRoleNav("BUYER");
 
   return (
     <div className="min-h-screen flex bg-gray-50 overflow-x-hidden">
-      {/* Sidebar navigation component */}
+      {/* Komponen navigasi sidebar */}
       <DashboardSidebar
         {...nav}
         isOpen={sidebar.isOpen}
@@ -37,7 +37,7 @@ export default function BuyerLayout({
       />
 
       <div className="flex-1 flex flex-col min-w-0">
-        {/* Mobile header with menu toggle */}
+        {/* Header mobile dengan toggle menu */}
         <header className="lg:hidden bg-white border-b px-4 py-3 flex items-center">
           <Button variant="ghost" size="icon" onClick={sidebar.open}>
             <Menu className="w-5 h-5" />
@@ -45,7 +45,7 @@ export default function BuyerLayout({
           <span className="ml-3 font-semibold">Buyer Dashboard</span>
         </header>
 
-        {/* Main content area */}
+        {/* Area konten utama */}
         <main className="flex-1 overflow-auto">{children}</main>
       </div>
     </div>

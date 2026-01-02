@@ -1,3 +1,8 @@
+/**
+ * Komponen CatalogPropertyCard
+ * Kartu properti untuk katalog dengan fitur wishlist
+ */
+
 "use client";
 
 import { useWishlist } from "@/hooks/property/useWishlist";
@@ -6,26 +11,33 @@ import { Heart } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
-type Props = {
+interface CatalogPropertyCardProps {
   property: CatalogProperty;
   badge?: string;
   showWishlist?: boolean;
-};
+}
 
+/**
+ * Menampilkan kartu properti katalog dengan tombol wishlist
+ * @param props - Props komponen
+ */
 export default function CatalogPropertyCard({
   property,
   badge,
   showWishlist = true,
-}: Props) {
+}: CatalogPropertyCardProps) {
   const { isInWishlist, toggleWishlist } = useWishlist();
   const isWishlisted = isInWishlist(property.propertyId);
 
-  // Format price to Indonesian Rupiah
+  // Format harga ke Rupiah Indonesia
   const formattedPrice = property.price.toLocaleString("id-ID");
 
-  // Extract location from address (first part before comma)
+  // Ekstrak lokasi dari alamat (bagian pertama sebelum koma)
   const location = property.address.split(",")[0] || property.address;
 
+  /**
+   * Handler klik tombol wishlist
+   */
   const handleWishlistClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -37,6 +49,7 @@ export default function CatalogPropertyCard({
       href={`/dashboard/buyer/properties/${property.propertyId}`}
       className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200 block group"
     >
+      {/* Container gambar */}
       <div className="relative w-full h-48 rounded-t-xl overflow-hidden bg-gray-100">
         <Image
           src={property.imageUrl || "/home.png"}
@@ -46,14 +59,14 @@ export default function CatalogPropertyCard({
           className="object-cover group-hover:scale-105 transition-transform duration-300"
         />
 
-        {/* BADGE */}
+        {/* Badge properti */}
         {badge && (
           <span className="absolute top-3 left-3 bg-[#39D177] text-white text-xs px-3 py-1 rounded-full shadow">
             {badge}
           </span>
         )}
 
-        {/* WISHLIST BUTTON */}
+        {/* Tombol wishlist */}
         {showWishlist && (
           <button
             onClick={handleWishlistClick}
@@ -69,6 +82,7 @@ export default function CatalogPropertyCard({
         )}
       </div>
 
+      {/* Info properti */}
       <div className="p-4 space-y-1">
         <h3 className="font-semibold text-lg line-clamp-1">
           {property.description || `Properti #${property.propertyId}`}

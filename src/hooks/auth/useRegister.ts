@@ -1,6 +1,6 @@
 /**
- * useRegister Hook
- * Manages registration form state and user creation logic
+ * Hook useRegister
+ * Mengelola state form registrasi dan logika pembuatan akun
  */
 
 "use client";
@@ -10,18 +10,18 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 
-import { RegisterRole } from "@/types/auth";
 import { registerSchema } from "@/services/auth/auth.schema";
 import { authService } from "@/services/auth/auth.service";
+import { RegisterRole } from "@/types/auth";
 
 /**
- * Custom hook for handling user registration
- * @returns Registration form state and handlers
+ * Custom hook untuk menangani registrasi pengguna
+ * @returns State dan handler form registrasi
  */
 export function useRegister() {
   const router = useRouter();
 
-  // Form input states
+  // State input form
   const [role, setRole] = useState<RegisterRole>("pembeli");
   const [username, setUsername] = useState("");
   const [name, setName] = useState("");
@@ -30,22 +30,22 @@ export function useRegister() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  // UI states
+  // State UI
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   /**
-   * Handle registration form submission
-   * Validates input, calls API, and redirects to login on success
+   * Menangani submit form registrasi
+   * Memvalidasi input, memanggil API, dan redirect ke login jika berhasil
    */
   const handleRegister = async (): Promise<void> => {
     setIsLoading(true);
     setError(null);
 
     try {
-      // Validate form data with Zod
+      // Validasi data form dengan Zod
       const validation = registerSchema.safeParse({
         username,
         name,
@@ -63,10 +63,10 @@ export function useRegister() {
         return;
       }
 
-      // Convert role to API format
+      // Konversi role ke format API
       const apiRole = role === "pembeli" ? "BUYER" : "SELLER";
 
-      // Call register API
+      // Panggil API registrasi
       await authService.register({
         username,
         name,
@@ -79,7 +79,7 @@ export function useRegister() {
       toast.success("Registrasi berhasil. Silakan login.");
       router.push("/login");
     } catch (err) {
-      // Handle API errors
+      // Tangani error API
       const message = axios.isAxiosError(err)
         ? err.response?.data?.message ?? "Gagal registrasi"
         : "Terjadi kesalahan sistem";
@@ -92,7 +92,7 @@ export function useRegister() {
   };
 
   return {
-    // Form states
+    // State form
     role,
     username,
     name,
@@ -105,7 +105,7 @@ export function useRegister() {
     showConfirmPassword,
     error,
 
-    // Form setters
+    // Setter form
     setRole,
     setUsername,
     setName,
@@ -116,7 +116,7 @@ export function useRegister() {
     setShowPassword,
     setShowConfirmPassword,
 
-    // Actions
+    // Aksi
     handleRegister,
   };
 }

@@ -1,9 +1,9 @@
 /**
- * Common API Types
- * Shared type definitions for API responses across the application
+ * Tipe API Umum
+ * Definisi tipe yang digunakan bersama untuk respons API di seluruh aplikasi
  */
 
-/** Generic API response wrapper */
+/** Wrapper respons API generik */
 export interface ApiResponse<T> {
   success: boolean;
   message: string;

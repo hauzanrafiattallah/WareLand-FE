@@ -1,6 +1,6 @@
 /**
- * Auth Service - Barrel Export
- * Re-exports all authentication service modules
+ * Layanan Autentikasi - Barrel Export
+ * Re-export semua modul layanan autentikasi
  */
 
 export * from "./auth.schema";

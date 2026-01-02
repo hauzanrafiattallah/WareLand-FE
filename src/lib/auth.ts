@@ -1,15 +1,15 @@
 /**
- * Auth Utilities
- * Helper functions for authentication and authorization
+ * Utilitas Autentikasi
+ * Fungsi helper untuk autentikasi dan otorisasi
  */
 
 import { UserRole } from "@/types/auth";
 
 /**
- * Normalize role string from backend to standard format
- * @param role - Role string from API response
- * @returns Normalized UserRole
- * @throws Error if role is not valid
+ * Normalisasi string role dari backend ke format standar
+ * @param role - String role dari respons API
+ * @returns UserRole yang sudah dinormalisasi
+ * @throws Error jika role tidak valid
  */
 export function normalizeRole(role: string): UserRole {
   const normalized = role.toUpperCase();
@@ -26,9 +26,9 @@ export function normalizeRole(role: string): UserRole {
 }
 
 /**
- * Get dashboard path for a specific role
- * @param role - User's role
- * @returns Dashboard URL path
+ * Mendapatkan path dashboard untuk role tertentu
+ * @param role - Role pengguna
+ * @returns Path URL dashboard
  */
 export function getDashboardPathByRole(role: UserRole): string {
   switch (role) {

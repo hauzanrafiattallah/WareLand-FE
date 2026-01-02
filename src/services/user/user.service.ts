@@ -1,6 +1,6 @@
 /**
- * User Service
- * API calls for user-related operations
+ * Layanan Pengguna
+ * Panggilan API untuk operasi terkait pengguna
  */
 
 import { axiosInstance } from "@/lib/axios";
@@ -9,8 +9,8 @@ import { UpdateUserPayload, UserProfile } from "@/types/user";
 
 export const userService = {
   /**
-   * Get current authenticated user profile
-   * @returns Current user profile data
+   * Mendapatkan profil pengguna yang sedang login
+   * @returns Data profil pengguna saat ini
    */
   getMe: async () => {
     const { data } = await axiosInstance.get<ApiResponse<UserProfile>>(
@@ -20,10 +20,10 @@ export const userService = {
   },
 
   /**
-   * Update user profile information
-   * @param id - User ID to update
-   * @param payload - Updated profile data
-   * @returns Updated user profile
+   * Memperbarui informasi profil pengguna
+   * @param id - ID pengguna yang akan diperbarui
+   * @param payload - Data profil yang diperbarui
+   * @returns Profil pengguna yang sudah diperbarui
    */
   updateProfile: async (id: number, payload: UpdateUserPayload) => {
     const { data } = await axiosInstance.put<ApiResponse<UserProfile>>(
@@ -34,9 +34,9 @@ export const userService = {
   },
 
   /**
-   * Delete user account permanently
-   * @param id - User ID to delete
-   * @returns Confirmation response
+   * Menghapus akun pengguna secara permanen
+   * @param id - ID pengguna yang akan dihapus
+   * @returns Respons konfirmasi
    */
   deleteAccount: async (id: number) => {
     const { data } = await axiosInstance.delete<ApiResponse<null>>(

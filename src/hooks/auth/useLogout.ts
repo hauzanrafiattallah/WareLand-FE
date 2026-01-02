@@ -1,6 +1,6 @@
 /**
- * useLogout Hook
- * Handles user logout and session cleanup
+ * Hook useLogout
+ * Menangani logout pengguna dan pembersihan sesi
  */
 
 "use client";
@@ -12,31 +12,31 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 /**
- * Custom hook for handling user logout
- * @returns Logout function
+ * Custom hook untuk menangani logout pengguna
+ * @returns Fungsi logout
  */
 export function useLogout() {
   const router = useRouter();
 
   /**
-   * Logout user and clear session data
-   * Clears localStorage and redirects to login page
+   * Logout pengguna dan hapus data sesi
+   * Membersihkan localStorage dan redirect ke halaman login
    */
   const logout = async () => {
     try {
-      // Call logout API
+      // Panggil API logout
       await authService.logout();
     } catch (err) {
-      // Show error but still proceed with local cleanup
+      // Tampilkan error tapi tetap lanjutkan pembersihan lokal
       if (err instanceof AxiosError) {
         toast.error(err.response?.data?.message || "Gagal logout");
       }
     } finally {
-      // Clear local storage
+      // Bersihkan local storage
       localStorage.removeItem("accessToken");
       localStorage.removeItem("user");
 
-      // Clear authorization header
+      // Hapus header authorization
       delete axiosInstance.defaults.headers.common.Authorization;
 
       toast.success("Logout berhasil");

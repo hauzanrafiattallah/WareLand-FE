@@ -1,6 +1,6 @@
 /**
- * User Service - Barrel Export
- * Re-exports all user service modules
+ * Layanan Pengguna - Barrel Export
+ * Re-export semua modul layanan pengguna
  */
 
 export * from "./user.service";

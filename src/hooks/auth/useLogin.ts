@@ -1,6 +1,6 @@
 /**
- * useLogin Hook
- * Manages login form state and authentication logic
+ * Hook useLogin
+ * Mengelola state form login dan logika autentikasi
  */
 
 "use client";
@@ -15,31 +15,31 @@ import { loginSchema } from "@/services/auth/auth.schema";
 import { authService } from "@/services/auth/auth.service";
 
 /**
- * Custom hook for handling user login
- * @returns Login form state and handlers
+ * Custom hook untuk menangani login pengguna
+ * @returns State dan handler form login
  */
 export function useLogin() {
   const router = useRouter();
 
-  // Form input states
+  // State input form
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
 
-  // UI states
+  // State UI
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
   /**
-   * Handle login form submission
-   * Validates input, calls API, and redirects on success
+   * Menangani submit form login
+   * Memvalidasi input, memanggil API, dan redirect jika berhasil
    */
   const handleLogin = async (): Promise<void> => {
     setIsLoading(true);
     setError(null);
 
     try {
-      // Validate form data with Zod
+      // Validasi data form dengan Zod
       const validation = loginSchema.safeParse({
         username: email,
         password,
@@ -52,23 +52,23 @@ export function useLogin() {
         return;
       }
 
-      // Call login API
+      // Panggil API login
       const response = await authService.login({
         username: email,
         password,
       });
 
-      // Store auth data in localStorage
+      // Simpan data auth di localStorage
       localStorage.setItem("accessToken", response.data.token);
       localStorage.setItem("user", JSON.stringify(response.data.profile));
 
       toast.success("Login berhasil. Selamat datang!");
 
-      // Redirect to appropriate dashboard
+      // Redirect ke dashboard yang sesuai
       const role = normalizeRole(response.data.profile.role);
       router.push(getDashboardPathByRole(role));
     } catch (err: unknown) {
-      // Handle API errors
+      // Tangani error API
       let message = "Terjadi kesalahan sistem";
 
       if (axios.isAxiosError(err)) {
@@ -85,19 +85,19 @@ export function useLogin() {
   };
 
   return {
-    // Form states
+    // State form
     email,
     password,
     isLoading,
     showPassword,
     error,
 
-    // Form setters
+    // Setter form
     setEmail,
     setPassword,
     setShowPassword,
 
-    // Actions
+    // Aksi
     handleLogin,
   };
 }

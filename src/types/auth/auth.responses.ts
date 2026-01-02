@@ -1,9 +1,9 @@
 /**
- * Auth Response Types
- * Type definitions for authentication API responses
+ * Tipe Respons Autentikasi
+ * Definisi tipe untuk respons API autentikasi
  */
 
-/** User profile data returned from auth endpoints */
+/** Data profil pengguna yang dikembalikan dari endpoint auth */
 export interface AuthUserProfile {
   id: number;
   username: string;
@@ -16,11 +16,11 @@ export interface AuthUserProfile {
   updatedAt: string;
 }
 
-/** Login endpoint response data */
+/** Data respons endpoint login */
 export interface LoginResponseData {
   token: string;
   profile: AuthUserProfile;
 }
 
-/** Register endpoint response data (same as user profile) */
+/** Data respons endpoint registrasi (sama dengan profil pengguna) */
 export type RegisterResponseData = AuthUserProfile;

@@ -1,14 +1,14 @@
 /**
- * Role Check Utilities
- * Helper functions for checking user roles from local storage
+ * Utilitas Pengecekan Role
+ * Fungsi helper untuk mengecek role pengguna dari local storage
  */
 
 import { normalizeRole } from "@/lib/auth";
 import { UserRole } from "@/types/auth";
 
 /**
- * Get current user role from local storage
- * @returns User role or null if not found/invalid
+ * Mendapatkan role pengguna saat ini dari local storage
+ * @returns Role pengguna atau null jika tidak ditemukan/invalid
  */
 export function getStoredUserRole(): UserRole | null {
   if (typeof window === "undefined") return null;
@@ -24,8 +24,8 @@ export function getStoredUserRole(): UserRole | null {
 }
 
 /**
- * Check if current user is a seller
- * @returns True if user has SELLER role
+ * Mengecek apakah pengguna saat ini adalah seller
+ * @returns True jika pengguna memiliki role SELLER
  */
 export function isSeller(): boolean {
   const role = getStoredUserRole();

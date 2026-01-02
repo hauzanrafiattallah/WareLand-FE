@@ -1,6 +1,6 @@
 /**
- * Common Types - Barrel Export
- * Re-exports all shared type definitions
+ * Tipe Umum - Barrel Export
+ * Re-export semua definisi tipe bersama
  */
 
 export * from "./api.types";
