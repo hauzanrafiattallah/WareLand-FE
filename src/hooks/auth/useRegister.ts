@@ -1,122 +1,58 @@
 /**
- * Hook useRegister
- * Mengelola state form registrasi dan logika pembuatan akun
+ * Hook useRegisterSubmit
+ * Mengelola logika submit registrasi dengan react-hook-form
  */
 
 "use client";
 
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
 import { toast } from "sonner";
 
-import { registerSchema } from "@/services/auth/auth.schema";
 import { authService } from "@/services/auth/auth.service";
-import { RegisterRole } from "@/types/auth";
+import { RegisterForm } from "@/services/auth/auth.schema";
 
 /**
- * Custom hook untuk menangani registrasi pengguna
- * @returns State dan handler form registrasi
+ * Custom hook untuk menangani submit registrasi
+ * Digunakan bersama react-hook-form
+ * @returns Handler submit
  */
-export function useRegister() {
+export function useRegisterSubmit() {
   const router = useRouter();
 
-  // State input form
-  const [role, setRole] = useState<RegisterRole>("pembeli");
-  const [username, setUsername] = useState("");
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-
-  // State UI
-  const [isLoading, setIsLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
   /**
-   * Menangani submit form registrasi
-   * Memvalidasi input, memanggil API, dan redirect ke login jika berhasil
+   * Handler submit form registrasi
+   * @param data - Data form yang sudah divalidasi oleh Zod
    */
-  const handleRegister = async (): Promise<void> => {
-    setIsLoading(true);
-    setError(null);
-
+  const onSubmit = async (data: RegisterForm): Promise<void> => {
     try {
-      // Validasi data form dengan Zod
-      const validation = registerSchema.safeParse({
-        username,
-        name,
-        email,
-        phoneNumber,
-        password,
-        confirmPassword,
-        role,
-      });
-
-      if (!validation.success) {
-        const message = validation.error.issues[0].message;
-        setError(message);
-        toast.error(message);
-        return;
-      }
-
       // Konversi role ke format API
-      const apiRole = role === "pembeli" ? "BUYER" : "SELLER";
+      const apiRole = data.role === "pembeli" ? "BUYER" : "SELLER";
 
       // Panggil API registrasi
       await authService.register({
-        username,
-        name,
-        email,
-        phoneNumber,
-        password,
+        username: data.username,
+        name: data.name,
+        email: data.email,
+        phoneNumber: data.phoneNumber,
+        password: data.password,
         role: apiRole,
       });
 
-      toast.success("Registrasi berhasil. Silakan login.");
+      toast.success("Registrasi berhasil! Silakan login untuk melanjutkan");
       router.push("/login");
-    } catch (err) {
+    } catch (err: unknown) {
       // Tangani error API
-      const message = axios.isAxiosError(err)
-        ? err.response?.data?.message ?? "Gagal registrasi"
-        : "Terjadi kesalahan sistem";
-
-      setError(message);
+      let message = "Terjadi kesalahan sistem";
+      if (axios.isAxiosError(err)) {
+        message =
+          (err.response?.data as { message?: string })?.message ??
+          "Gagal registrasi";
+      }
       toast.error(message);
-    } finally {
-      setIsLoading(false);
+      throw err; // Re-throw untuk ditangani oleh form
     }
   };
 
-  return {
-    // State form
-    role,
-    username,
-    name,
-    email,
-    phoneNumber,
-    password,
-    confirmPassword,
-    isLoading,
-    showPassword,
-    showConfirmPassword,
-    error,
-
-    // Setter form
-    setRole,
-    setUsername,
-    setName,
-    setEmail,
-    setPhoneNumber,
-    setPassword,
-    setConfirmPassword,
-    setShowPassword,
-    setShowConfirmPassword,
-
-    // Aksi
-    handleRegister,
-  };
+  return { onSubmit };
 }
