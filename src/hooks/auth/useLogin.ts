@@ -1,77 +1,59 @@
+/**
+ * Hook useLoginForm
+ * Mengelola logika submit login dengan react-hook-form
+ */
+
 "use client";
 
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
 import { toast } from "sonner";
 
 import { getDashboardPathByRole, normalizeRole } from "@/lib/auth";
-import { loginSchema } from "@/services/auth/auth.schema";
 import { authService } from "@/services/auth/auth.service";
+import { LoginForm } from "@/services/auth/auth.schema";
 
-export function useLogin() {
+/**
+ * Custom hook untuk menangani submit login
+ * Digunakan bersama react-hook-form
+ * @returns Handler submit dan state loading
+ */
+export function useLoginSubmit() {
   const router = useRouter();
 
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [showPassword, setShowPassword] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
-
-  const handleLogin = async (): Promise<void> => {
-    setIsLoading(true);
-    setError(null);
-
+  /**
+   * Handler submit form login
+   * @param data - Data form yang sudah divalidasi oleh Zod
+   */
+  const onSubmit = async (data: LoginForm): Promise<void> => {
     try {
-      const validation = loginSchema.safeParse({
-        username: email,
-        password,
-      });
-
-      if (!validation.success) {
-        const message = validation.error.issues[0].message;
-        setError(message);
-        toast.error(message);
-        return;
-      }
-
+      // Panggil API login
       const response = await authService.login({
-        username: email,
-        password,
+        username: data.username,
+        password: data.password,
       });
 
+      // Simpan data auth di localStorage
       localStorage.setItem("accessToken", response.data.token);
       localStorage.setItem("user", JSON.stringify(response.data.profile));
 
-      toast.success("Login berhasil. Selamat datang!");
+      toast.success("Login berhasil! Selamat datang kembali");
 
+      // Redirect ke dashboard sesuai role
       const role = normalizeRole(response.data.profile.role);
       router.push(getDashboardPathByRole(role));
     } catch (err: unknown) {
+      // Tangani error API
       let message = "Terjadi kesalahan sistem";
-
       if (axios.isAxiosError(err)) {
         message =
           (err.response?.data as { message?: string })?.message ??
           "Gagal login, periksa kredensial Anda";
       }
-
-      setError(message);
       toast.error(message);
-    } finally {
-      setIsLoading(false);
+      throw err; // Re-throw untuk ditangani oleh form
     }
   };
 
-  return {
-    email,
-    password,
-    isLoading,
-    showPassword,
-    error,
-    setEmail,
-    setPassword,
-    setShowPassword,
-    handleLogin,
-  };
+  return { onSubmit };
 }

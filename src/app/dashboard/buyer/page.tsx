@@ -1,8 +1,8 @@
 "use client";
 
-import CatalogPropertyCard from "@/components/CatalogPropertyCard";
+import { CatalogPropertyCard } from "@/components/property";
 import { useCatalogProperties } from "@/hooks/property/useCatalogProperties";
-import { Loader2, Search, SlidersHorizontal, Building, X } from "lucide-react";
+import { Building, Loader2, Search, SlidersHorizontal, X } from "lucide-react";
 import { useEffect, useState } from "react";
 
 // Price range options (in Rupiah)

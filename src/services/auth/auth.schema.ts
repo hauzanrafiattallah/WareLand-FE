@@ -1,11 +1,17 @@
-// auth.schema.ts
+/**
+ * Skema Validasi Autentikasi
+ * Skema Zod untuk memvalidasi data form autentikasi
+ */
+
 import { z } from "zod";
 
+/** Skema validasi form login */
 export const loginSchema = z.object({
   username: z.string().min(1, "Username wajib diisi"),
   password: z.string().min(1, "Password wajib diisi"),
 });
 
+/** Skema validasi form registrasi dengan konfirmasi password */
 export const registerSchema = z
   .object({
     username: z.string().min(3, "Username minimal 3 karakter"),
@@ -26,5 +32,8 @@ export const registerSchema = z
     path: ["confirmPassword"],
   });
 
+/** Tipe yang diinferensikan dari skema login */
 export type LoginForm = z.infer<typeof loginSchema>;
+
+/** Tipe yang diinferensikan dari skema registrasi */
 export type RegisterForm = z.infer<typeof registerSchema>;

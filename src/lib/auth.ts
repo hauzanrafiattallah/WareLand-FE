@@ -1,11 +1,15 @@
-// src/lib/auth.ts
+/**
+ * Utilitas Autentikasi
+ * Fungsi helper untuk autentikasi dan otorisasi
+ */
 
-export type UserRole = "SELLER" | "BUYER" | "ADMIN";
+import { UserRole } from "@/types/auth";
 
 /**
- * Normalisasi role dari backend
- * - PASTI return string (tidak pernah undefined)
- * - Akan throw error jika role tidak valid
+ * Normalisasi string role dari backend ke format standar
+ * @param role - String role dari respons API
+ * @returns UserRole yang sudah dinormalisasi
+ * @throws Error jika role tidak valid
  */
 export function normalizeRole(role: string): UserRole {
   const normalized = role.toUpperCase();
@@ -22,7 +26,9 @@ export function normalizeRole(role: string): UserRole {
 }
 
 /**
- * Mapping role ke dashboard path
+ * Mendapatkan path dashboard untuk role tertentu
+ * @param role - Role pengguna
+ * @returns Path URL dashboard
  */
 export function getDashboardPathByRole(role: UserRole): string {
   switch (role) {
