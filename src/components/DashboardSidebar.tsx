@@ -155,10 +155,7 @@ export default function DashboardSidebar({
                       {item.name}
                     </span>
 
-                    {/* Arrow indicator */}
-                    {isActive && (
-                      <ChevronRight className="w-4 h-4 opacity-70" />
-                    )}
+
 
                     {/* Active indicator bar */}
                     {isActive && (
