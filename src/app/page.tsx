@@ -11,30 +11,30 @@ export default function LandingPage() {
         {/* LEFT TEXT SECTION */}
         <div className="space-y-6">
           <h1 className="text-5xl font-bold leading-tight text-gray-900">
-            Property Transactions <br />
-            Are More <span className="text-[#39D177]">Transparent &</span>{" "}
+            Transaksi Properti <br />
+            Lebih <span className="text-[#39D177]">Transparan &</span>{" "}
             <br />
-            <span className="text-[#39D177]">Protected</span>
+            <span className="text-[#39D177]">Terlindungi</span>
           </h1>
 
           <p className="text-gray-600 max-w-md">
-            WareLand helps you buy and sell properties easily through a
-            transparent and reliable property marketplace.
+            WareLand membantu Anda membeli dan menjual properti dengan mudah
+            melalui marketplace properti yang transparan dan terpercaya.
           </p>
 
-          {/* BUTTONS */}
+          {/* TOMBOL */}
           <div className="flex gap-4">
             <Link
               href="/register"
               className="px-6 py-3 rounded-full text-white bg-[#39D177] hover:bg-[#2FAE63] transition font-medium"
             >
-              Register Now
+              Daftar
             </Link>
           </div>
         </div>
 
         {/* RIGHT IMAGE */}
-        <div className="flex justify-center">
+        <div className="hidden md:flex justify-center"> 
           <Image
             src="/home.png"
             width={450}

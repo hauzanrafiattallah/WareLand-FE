@@ -1,33 +1,32 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter, useParams } from "next/navigation";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { uploadToCloudinary } from "@/lib/cloudinary";
 import {
-  UploadCloud,
-  Loader2,
-  X,
-  MapPin,
-  DollarSign,
-  FileText,
-  Home,
+  CreatePropertyInput,
+  createPropertySchema,
+} from "@/services/property/property.schema";
+import { PropertyService } from "@/services/property/property.service";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
   ArrowLeft,
   CheckCircle2,
+  DollarSign,
+  FileText,
   Image as ImageIcon,
+  Loader2,
+  MapPin,
+  UploadCloud,
+  X,
 } from "lucide-react";
-import { toast } from "sonner";
-import { PropertyService } from "@/services/property/property.service";
-import {
-  createPropertySchema,
-  CreatePropertyInput,
-} from "@/services/property/property.schema";
-import { uploadToCloudinary } from "@/lib/cloudinary";
 import Image from "next/image";
 import Link from "next/link";
+import { useParams, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 export default function EditPropertyPage() {
   const router = useRouter();
@@ -61,7 +60,7 @@ export default function EditPropertyPage() {
         const res = await PropertyService.getById(propertyId);
         if (res.success && res.data) {
           const { address, price, description, imageUrl } = res.data;
-          
+
           reset({
             address,
             price,
@@ -73,8 +72,8 @@ export default function EditPropertyPage() {
             setImagePreview(imageUrl);
           }
         } else {
-            toast.error("Properti tidak ditemukan");
-            router.push("/dashboard/seller/listings");
+          toast.error("Properti tidak ditemukan");
+          router.push("/dashboard/seller/listings");
         }
       } catch (error) {
         console.error(error);
@@ -176,8 +175,8 @@ export default function EditPropertyPage() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
-            <Loader2 className="w-10 h-10 text-[#39D177] animate-spin mx-auto mb-4" />
-            <p className="text-gray-500">Memuat data properti...</p>
+          <Loader2 className="w-10 h-10 text-[#39D177] animate-spin mx-auto mb-4" />
+          <p className="text-gray-500">Memuat data properti...</p>
         </div>
       </div>
     );
@@ -254,7 +253,9 @@ export default function EditPropertyPage() {
                     {...register("address")}
                     placeholder="Contoh: Jl. Mawar No. 20, Jakarta Selatan"
                     className={`h-12 rounded-xl border-gray-200 focus:border-[#39D177] focus:ring-[#39D177]/20 transition-all ${
-                      errors.address ? "border-red-300 focus:border-red-500" : ""
+                      errors.address
+                        ? "border-red-300 focus:border-red-500"
+                        : ""
                     }`}
                   />
                   {errors.address && (
@@ -290,7 +291,9 @@ export default function EditPropertyPage() {
                       {...register("price", { valueAsNumber: true })}
                       placeholder="1.500.000.000"
                       className={`h-12 pl-12 rounded-xl border-gray-200 focus:border-[#39D177] focus:ring-[#39D177]/20 transition-all ${
-                        errors.price ? "border-red-300 focus:border-red-500" : ""
+                        errors.price
+                          ? "border-red-300 focus:border-red-500"
+                          : ""
                       }`}
                     />
                   </div>
@@ -329,7 +332,9 @@ export default function EditPropertyPage() {
                     }`}
                   />
                   {errors.description && (
-                    <p className="text-sm text-red-500">{errors.description.message}</p>
+                    <p className="text-sm text-red-500">
+                      {errors.description.message}
+                    </p>
                   )}
                 </div>
               </div>
@@ -388,7 +393,11 @@ export default function EditPropertyPage() {
                     {/* If new file selected show name, else show 'Current Image' */}
                     <div className="absolute bottom-3 left-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
                       <p className="text-white text-sm font-medium truncate drop-shadow-md">
-                        {imageFile ? imageFile.name : (imagePreview.startsWith('http') ? 'Gambar Saat Ini' : 'Preview')}
+                        {imageFile
+                          ? imageFile.name
+                          : imagePreview.startsWith("http")
+                            ? "Gambar Saat Ini"
+                            : "Preview"}
                       </p>
                     </div>
                   </div>
@@ -434,9 +443,18 @@ export default function EditPropertyPage() {
 }
 
 function EditIcon({ className }: { className?: string }) {
-    return (
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-            <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z" />
-        </svg>
-    )
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z" />
+    </svg>
+  );
 }
